@@ -23,34 +23,43 @@ public class Book
         educational
     }
     /*----------------------------*/
+     public void setAutor(String nameAutor)
+    {
+        autor=nameAutor;
+    }
+
     public String getAutor ()
     {
         return autor;
     }
-
-    public void setAutor(String nameAutor)
-    {
-        nameAutor=autor;
-    }
     /*-------------------------*/
+    public void setTitle (String nameBook)
+    {
+        title=nameBook;
+    }
+
     public String getTitle ()
     {
         return title;
     }
-
-    public void setTitle (String nameBook)
-    {
-        nameBook=title;
-    }
     /*------------------------*/
-    public int getQuantity()
+    public void setGenre (Genre nameGenre)
     {
-        return quantity;
+        genre=nameGenre;
     }
-
+    public Genre getGenre ()
+    {
+        return genre;
+    }
+    /*--------------------------*/
     public void setQuantity (int num)
     {
         quantity=num;
+    }
+
+    public int getQuantity()
+    {
+        return quantity;
     }
     /*-----------------------------*/
     public double getPrice()
