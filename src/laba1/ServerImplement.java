@@ -2,7 +2,6 @@ package laba1;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 /**
@@ -10,7 +9,7 @@ import java.util.List;
  */
 public class ServerImplement implements DataServer
 {
-    ArrayList<Book> books=new ArrayList<Book>();
+    List<Book> books=new LinkedList();
 
     public ServerImplement() throws RemoteException
     {
@@ -18,22 +17,22 @@ public class ServerImplement implements DataServer
     }
 
     @Override
-    public ArrayList<Book> getAll () throws RemoteException
+    public List<Book> getAll () throws RemoteException
     {
         return books;
     }
 
     @Override
-    //Добавление элемента в базу
+    //Добавление элемента в конец списка
     public void insert (Book book) throws RemoteException
     {
         books.add(book);
     }
 
 
-    public ArrayList<Book> findByAutor(String autor) throws RemoteException
+    public List<Book> findByAutor(String autor) throws RemoteException
     {
-        ArrayList<Book> newbooks = new ArrayList<Book>();
+        List<Book> newbooks = new LinkedList();
         for (Book book: books)
         {
             if (autor.equals(book.getAutor()))
@@ -44,9 +43,9 @@ public class ServerImplement implements DataServer
         return newbooks;
     }
 
-    public ArrayList<Book> findByTitle(String title) throws RemoteException
+    public List<Book> findByTitle(String title) throws RemoteException
     {
-        ArrayList<Book> newbooks = new ArrayList<Book>();
+        List<Book> newbooks = new LinkedList();
         for (Book book: books)
         {
             if (book.getTitle() == title)
@@ -57,9 +56,9 @@ public class ServerImplement implements DataServer
         return newbooks;
     }
 
-    public ArrayList<Book> findByGenre(Book.Genre genre) throws RemoteException
+    public List<Book> findByGenre(Book.Genre genre) throws RemoteException
     {
-        ArrayList<Book> newbooks = new ArrayList<Book>();
+        List<Book> newbooks = new LinkedList();
         for (Book book: books)
         {
             if (book.getGenre() == genre)
@@ -70,9 +69,9 @@ public class ServerImplement implements DataServer
         return newbooks;
     }
 
-    public ArrayList<Book> findByQuantity(int quantity) throws RemoteException
+    public List<Book> findByQuantity(int quantity) throws RemoteException
     {
-        ArrayList<Book> newbooks = new ArrayList<Book>();
+        List<Book> newbooks = new LinkedList();
         for (Book book: books)
         {
             if (book.getQuantity() == quantity)
@@ -83,9 +82,9 @@ public class ServerImplement implements DataServer
         return newbooks;
     }
 
-    public ArrayList<Book> findByPrice(double price) throws RemoteException
+    public List<Book> findByPrice(double price) throws RemoteException
     {
-        ArrayList<Book> newbooks = new ArrayList<Book>();
+        List<Book> newbooks = new LinkedList();
         for (Book book: books)
         {
             if (book.getPrice() == price)
