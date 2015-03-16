@@ -7,8 +7,7 @@ import java.util.List;
 /**
  * Created by Елена on 14.03.2015.
  */
-public interface DataServer
-{
+public interface DataServer extends Remote {
     public void insert(Book book) throws RemoteException;
     public List<Book> getAll() throws RemoteException;
     public List<Book> findByAutor(String autor) throws RemoteException;

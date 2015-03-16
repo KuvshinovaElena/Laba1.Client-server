@@ -10,7 +10,7 @@ public class Client
 {
    public static void main (String [] args) throws Exception{
        Registry registry= LocateRegistry.getRegistry();
-       DataServer server= (DataServer)registry.lookup();        //???????
-       //Client client = new Client(server);
+       String objectName = "rmi://localhost/book";
+       DataServer server= (DataServer)registry.lookup(objectName);
    }
 }

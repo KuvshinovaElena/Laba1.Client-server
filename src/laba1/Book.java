@@ -20,6 +20,7 @@ public class Book
         child,
         classic,
         hobby,
+        art,
         educational
     }
     /*----------------------------*/
