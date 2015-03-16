@@ -99,5 +99,5 @@ public class ServerImplement implements DataServer
         }
         return newbooks;
     }
-    
+
 }
