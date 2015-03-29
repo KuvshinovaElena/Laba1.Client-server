@@ -24,9 +24,9 @@ public class Book
         educational
     }
     /*----------------------------*/
-     public void setAutor(String nameAutor)
+     public void setAutor(String autor)
     {
-        autor=nameAutor;
+        this.autor=autor;
     }
 
     public String getAutor ()
@@ -34,9 +34,9 @@ public class Book
         return autor;
     }
     /*-------------------------*/
-    public void setTitle (String nameBook)
+    public void setTitle (String title)
     {
-        title=nameBook;
+        this.title=title;
     }
 
     public String getTitle ()
@@ -44,18 +44,18 @@ public class Book
         return title;
     }
     /*------------------------*/
-    public void setGenre (Genre nameGenre)
+    public void setGenre (Genre genre)
     {
-        genre=nameGenre;
+        this.genre=genre;
     }
     public Genre getGenre ()
     {
         return genre;
     }
     /*--------------------------*/
-    public void setQuantity (int num)
+    public void setQuantity (int quantity)
     {
-        quantity=num;
+        this.quantity=quantity;
     }
 
     public int getQuantity()
@@ -68,8 +68,8 @@ public class Book
         return price;
     }
 
-    public void setPrise (double coast)
+    public void setPrise (double price)
     {
-        price=coast;
+        this.price=price;
     }
 }
