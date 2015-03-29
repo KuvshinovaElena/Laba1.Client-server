@@ -20,6 +20,6 @@ public class Server
         Registry registry = LocateRegistry.createRegistry(33099); // регистрация удаленного объекта в реестре rmiregistry
         String nameServer = "rmi://localhost/book";      //Название удалённого объекта
         registry.rebind(nameServer, server);
-        System.out.println("gfhgh");
+        System.out.println("Running...");
     }
 }
