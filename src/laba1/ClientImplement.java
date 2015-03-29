@@ -38,6 +38,7 @@ public class ClientImplement {
                 itemAdd();
                 break;
             case 2:
+                itemRemove();
                 break;
             case 3:
                 break;
@@ -106,6 +107,7 @@ public class ClientImplement {
             case 1: server.delAll();
                 break;
             case 2:
+                System.out.println("\nEnter the name of the book");
                 server.delTheTitle(this.scanner.nextLine());
                 break;
         }
