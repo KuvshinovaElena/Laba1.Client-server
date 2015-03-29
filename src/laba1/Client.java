@@ -14,13 +14,13 @@ public class Client
 {
    public static void main (String [] args) throws Exception
    {
-       Registry registry= LocateRegistry.getRegistry(1099);
+       Registry registry= LocateRegistry.getRegistry(33099);
        String objectName = "rmi://localhost/book";
        DataServer server= (DataServer)registry.lookup(objectName);
-
+       Menu();
    }
 
-    private void Menu ()
+    private static void Menu ()
     {
         int item=1;
         System.out.println("\t\t\tMenu:");
