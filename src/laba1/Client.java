@@ -5,7 +5,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 import java.util.Scanner;
-import java.io.IOException;
 
 /**
  * Created by Елена on 14.03.2015.
