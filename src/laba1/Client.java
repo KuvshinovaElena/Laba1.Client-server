@@ -12,11 +12,9 @@ import java.io.IOException;
  */
 public class Client
 {
-    private DataServer server;
-
    public static void main (String [] args) throws Exception
    {
-       Registry registry= LocateRegistry.getRegistry();
+       Registry registry= LocateRegistry.getRegistry(1099);
        String objectName = "rmi://localhost/book";
        DataServer server= (DataServer)registry.lookup(objectName);
 

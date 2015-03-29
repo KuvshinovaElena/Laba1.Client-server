@@ -7,22 +7,10 @@ public class Book
 {
     private String autor;
     private String title;
-    private Genre genre;
+    private String genre;
     private int quantity;
     private double price;
 
-    public enum Genre
-    {
-        fantasy,
-        detective,
-        nonfiction,
-        thriller,
-        child,
-        classic,
-        hobby,
-        art,
-        educational
-    }
     /*----------------------------*/
      public void setAutor(String autor)
     {
@@ -44,11 +32,11 @@ public class Book
         return title;
     }
     /*------------------------*/
-    public void setGenre (Genre genre)
+    public void setGenre (String genre)
     {
         this.genre=genre;
     }
-    public Genre getGenre ()
+    public String getGenre ()
     {
         return genre;
     }

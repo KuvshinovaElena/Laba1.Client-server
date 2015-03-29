@@ -12,7 +12,6 @@ import java.net.MalformedURLException;
 /**
  * Created by Елена on 14.03.2015.
  */
-
 public class Server
 {
     public static void main (String [] args) throws RemoteException, MalformedURLException

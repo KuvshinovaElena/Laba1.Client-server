@@ -59,7 +59,7 @@ public class ServerImplement implements DataServer
     }
 
     @Override
-    public List<Book> findByGenre(Book.Genre genre) throws RemoteException
+    public List<Book> findByGenre(String genre) throws RemoteException
     {
         List<Book> newbooks = new LinkedList();
         for (Book book: books)
