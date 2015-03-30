@@ -1,5 +1,6 @@
 package laba1;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
@@ -13,18 +14,18 @@ public class ClientImplement {
     private DataServer server;
     private Scanner scanner;
 
-    ClientImplement(DataServer server) throws RemoteException {
+    ClientImplement(DataServer server) throws IOException {
         this.server = server;
         this.scanner = new Scanner(System.in);
         this.Menu();
     }
-    private void Menu() throws RemoteException {
+    private void Menu() throws IOException,RemoteException {
         System.out.println("\t\t\tMenu:");
         System.out.println("1 Add to the list of books");
         System.out.println("2 Remove from the list of books...");
         System.out.println("3 Edit information about the book");
         System.out.println("4 Show the full list of books");
-        System.out.println("5 Search by book list");
+        System.out.println("5 Search by book list...");
         System.out.println("0 Exit");
         System.out.print("\nEnter the menu: ");
         int item = userInput();
@@ -61,7 +62,7 @@ public class ClientImplement {
         }
     }
 
-    public int userInput(){
+    public int userInput()throws RemoteException{
         Scanner sc = new Scanner(System.in);
         Integer i = null;
         while (true) {
@@ -76,7 +77,7 @@ public class ClientImplement {
         return i;
     }
 
-    private void itemAdd() throws RemoteException{
+    private void itemAdd() throws IOException, RemoteException {
         System.out.println("\nEnter the number of titles:");
         int num = userInput();
         while (num!=0){
@@ -137,7 +138,7 @@ public class ClientImplement {
         newbook.setQuantity(this.userInput());
         System.out.println("Enter the price:");
         newbook.setPrise(this.userInput());
-        this.server.edit(article,newbook);
+        this.server.edit(article, newbook);
     }
 
     public void print(ArrayList<Book> books) throws RemoteException{
