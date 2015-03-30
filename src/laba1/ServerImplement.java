@@ -23,8 +23,8 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer
 
     @Override
     //Добавление элемента в конец списка
-    public void insert (Book book) throws RemoteException {
-        this.books.add(book);
+    public void paste (Book book) throws RemoteException {
+        books.add(book);
     }
 
     @Override
@@ -52,10 +52,10 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer
     }
 
     @Override
-    public ArrayList<Book> findByGenre(String genre) throws RemoteException {
+    public ArrayList<Book> findByArticle(String article) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();
         for (Book book: books) {
-            if (genre.equals(book.getGenre())) {
+            if (article.equals(book.getArticle())) {
                 newbooks.add(book);
             }
             else  System.out.println("This book is not in the database.");

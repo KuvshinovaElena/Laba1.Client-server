@@ -5,12 +5,14 @@ package laba1;
  */
 public class Book
 {
+    private String article;
     private String autor;
     private String title;
-    private String genre;
     private int quantity;
     private double price;
 
+    Book (){
+    }
     /*----------------------------*/
      public void setAutor(String autor)
     {
@@ -32,13 +34,13 @@ public class Book
         return title;
     }
     /*------------------------*/
-    public void setGenre (String genre)
+    public void setArticle (String article)
     {
-        this.genre=genre;
+        this.article=article;
     }
-    public String getGenre ()
+    public String getArticle ()
     {
-        return genre;
+        return article;
     }
     /*--------------------------*/
     public void setQuantity (int quantity)
