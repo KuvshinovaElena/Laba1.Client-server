@@ -1,6 +1,9 @@
 package laba1;
 
 import java.io.IOException;
+import java.rmi.NotBoundException;
+import java.rmi.MarshalException;
+import java.rmi.UnmarshalException;
 import java.rmi.RemoteException;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
@@ -14,12 +17,12 @@ public class ClientImplement {
     private DataServer server;
     private Scanner scanner;
 
-    ClientImplement(DataServer server) throws IOException {
+    ClientImplement(DataServer server) throws IOException, NotBoundException {
         this.server = server;
         this.scanner = new Scanner(System.in);
         this.Menu();
     }
-    private void Menu() throws IOException,RemoteException {
+    private void Menu() throws IOException, NotBoundException {
         System.out.println("\t\t\tMenu:");
         System.out.println("1 Add to the list of books");
         System.out.println("2 Remove from the list of books...");
@@ -27,7 +30,7 @@ public class ClientImplement {
         System.out.println("4 Show the full list of books");
         System.out.println("5 Search by book list...");
         System.out.println("0 Exit");
-        System.out.print("\nEnter the menu: ");
+        System.out.print("\nEnter the menu:");
         int item = userInput();
         while (true){
             if (item<0 || item>6) {
@@ -77,7 +80,7 @@ public class ClientImplement {
         return i;
     }
 
-    private void itemAdd() throws IOException, RemoteException {
+    private void itemAdd() throws IOException {
         System.out.println("\nEnter the number of titles:");
         int num = userInput();
         while (num!=0){
@@ -92,7 +95,7 @@ public class ClientImplement {
             book.setQuantity(this.userInput());
             System.out.println("Enter the price:");
             book.setPrise(this.userInput());
-            this.server.paste(book);
+            server.paste(book);
             num--;
         }
     }
@@ -100,7 +103,7 @@ public class ClientImplement {
     private void itemRemove () throws RemoteException{
         System.out.println("\t\t\tRemove menu:");
         System.out.println("1 Delete all");
-        System.out.println("2 Remove by title");
+        System.out.println("2 Remove by article");
         System.out.println("3 Back to menu");
         System.out.print("\nEnter the menu: ");
         int item = userInput();
@@ -145,10 +148,10 @@ public class ClientImplement {
         if (!books.isEmpty()){
             for (Book book: books){
                 System.out.println("\nArticle:"+book.getArticle());
-                System.out.println("\nAutor:"+book.getAutor());
-                System.out.println("\nTitle:"+book.getTitle());
-                System.out.println("\nQuantity:"+book.getQuantity());
-                System.out.println("\nPrice:"+book.getPrice());
+                System.out.println("Autor:"+book.getAutor());
+                System.out.println("Title:"+book.getTitle());
+                System.out.println("Quantity:"+book.getQuantity());
+                System.out.println("Price:"+book.getPrice());
             }
         }
         else System.out.println("Em1pty");

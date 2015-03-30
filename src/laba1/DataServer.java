@@ -1,5 +1,6 @@
 package laba1;
 
+import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
  * Created by Елена on 14.03.2015.
  */
 public interface DataServer extends Remote {
-    public void paste(Book book) throws RemoteException;
+    public void paste(Book book) throws RemoteException, IOException;
     public ArrayList<Book> getAll() throws RemoteException;
     public void edit(String article,Book book ) throws RemoteException;
     public ArrayList<Book> findByAutor(String autor) throws RemoteException;

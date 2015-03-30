@@ -1,8 +1,10 @@
 package laba1;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+
 
 /**
  * Created by Елена on 15.03.2015.
@@ -23,10 +25,12 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
 
     @Override
     //Добавление элемента в конец списка
-    public void paste (Book book) throws RemoteException {
+    public void paste (Book book) throws RemoteException,IOException{
+
         books.add(book);
     }
     @Override
+    //Редактирование элемента
     public void edit(String article,Book book ) throws RemoteException{
         int index=1;
         for (Book dop: books){
@@ -37,6 +41,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         }
         books.set(index, book);
     }
+    //Поиск элемента по автору
     @Override
     public ArrayList<Book> findByAutor(String autor) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();
@@ -48,7 +53,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         }
         return newbooks;
     }
-
+    //Поиск элемента по названию
     @Override
     public ArrayList<Book> findByTitle(String title) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();
@@ -60,7 +65,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         }
         return newbooks;
     }
-
+    //Поиск элемента по артикулу
     @Override
     public ArrayList<Book> findByArticle(String article) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();
@@ -72,7 +77,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         }
         return newbooks;
     }
-
+    //Поиск элемента по количеству
     @Override
     public ArrayList<Book> findByQuantity(int quantity) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();
@@ -84,7 +89,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         }
         return newbooks;
     }
-
+    //Поиск элемента по цене
     @Override
     public ArrayList<Book> findByPrice(int price) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();

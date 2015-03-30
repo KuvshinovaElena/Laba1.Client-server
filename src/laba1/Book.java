@@ -1,11 +1,12 @@
 package laba1;
 
+import java.io.Serializable;
 /**
  * Created by Елена on 14.03.2015.
  */
-public class Book {
+public class Book implements Serializable{
 
-    private String article;
+    private String article;     //у каждого элемента артикул индивидуален
     private String autor;
     private String title;
     private int quantity;
