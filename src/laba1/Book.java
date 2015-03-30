@@ -44,4 +44,28 @@ public class Book implements Serializable{
     public void setPrise (int price) {
         this.price=price;
     }
+    public boolean equals(Object obj) {
+        Book other = (Book) obj;
+
+        if (this.getArticle().equals(other.getArticle())) {
+            if (this.getAutor() == other.getAutor()) {
+                if (this.getTitle() == other.getTitle()) {
+                    if (this.getQuantity() == other.getQuantity()) {
+                        if (this.getPrice() == other.getPrice()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return false;
+    }
 }

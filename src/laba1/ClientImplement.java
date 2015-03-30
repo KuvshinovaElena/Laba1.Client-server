@@ -65,7 +65,7 @@ public class ClientImplement {
         }
     }
 
-    public int userInput()throws RemoteException{
+    public int userInput()throws RemoteException,IOException{
         Scanner sc = new Scanner(System.in);
         Integer i = null;
         while (true) {
@@ -80,7 +80,7 @@ public class ClientImplement {
         return i;
     }
 
-    private void itemAdd() throws IOException {
+    private void itemAdd() throws RemoteException,IOException {
         System.out.println("\nEnter the number of titles:");
         int num = userInput();
         while (num!=0){
@@ -100,7 +100,7 @@ public class ClientImplement {
         }
     }
 
-    private void itemRemove () throws RemoteException{
+    private void itemRemove () throws RemoteException,IOException {
         System.out.println("\t\t\tRemove menu:");
         System.out.println("1 Delete all");
         System.out.println("2 Remove by article");
@@ -119,12 +119,14 @@ public class ClientImplement {
                 break;
             case 2:
                 System.out.println("\nEnter the article of the book you want to delete");
-                server.delTheTitle(this.scanner.nextLine());
+                server.delTheArticle(this.scanner.nextLine());
+                break;
+            case 3:
                 break;
         }
 
     }
-    private void itemEdit() throws RemoteException {
+    private void itemEdit() throws RemoteException,IOException {
         Book newbook= new Book();
         System.out.println("Enter the article of the book, the information you want to change:");
         String article=scanner.nextLine();
@@ -144,7 +146,7 @@ public class ClientImplement {
         this.server.edit(article, newbook);
     }
 
-    public void print(ArrayList<Book> books) throws RemoteException{
+    public void print(ArrayList<Book> books) throws RemoteException,IOException{
         if (!books.isEmpty()){
             for (Book book: books){
                 System.out.println("\nArticle:"+book.getArticle());
@@ -157,7 +159,7 @@ public class ClientImplement {
         else System.out.println("Em1pty");
     }
 
-    private void itemSearch() throws RemoteException{
+    private void itemSearch() throws RemoteException,IOException{
         System.out.println("\t\t\tSearch menu:");
         System.out.println("1 Search by article");
         System.out.println("2 Search by autor");
@@ -211,7 +213,7 @@ public class ClientImplement {
                 if (!list.isEmpty()) print(list);
                 else System.out.print("\nNot found");
                 break;
-            case 6:
+            case 0:
                 break;
         }
 

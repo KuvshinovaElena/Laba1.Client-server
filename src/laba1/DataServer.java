@@ -11,12 +11,12 @@ import java.util.ArrayList;
 public interface DataServer extends Remote {
     public void paste(Book book) throws RemoteException, IOException;
     public ArrayList<Book> getAll() throws RemoteException;
-    public void edit(String article,Book book ) throws RemoteException;
-    public ArrayList<Book> findByAutor(String autor) throws RemoteException;
-    public ArrayList<Book> findByTitle(String title) throws RemoteException;
-    public ArrayList<Book> findByArticle(String article) throws RemoteException;
-    public ArrayList<Book> findByQuantity(int quantity) throws RemoteException;
-    public ArrayList<Book> findByPrice(int price) throws RemoteException;
+    public void edit(String article,Book book ) throws RemoteException, IOException;
+    public ArrayList<Book> findByAutor(String autor) throws RemoteException, IOException;
+    public ArrayList<Book> findByTitle(String title) throws RemoteException, IOException;
+    public ArrayList<Book> findByArticle(String article) throws RemoteException, IOException;
+    public ArrayList<Book> findByQuantity(int quantity) throws RemoteException, IOException;
+    public ArrayList<Book> findByPrice(int price) throws RemoteException, IOException;
     public void delAll() throws RemoteException;
-    public void delTheTitle(String title) throws RemoteException;
+    void delTheArticle(String article) throws RemoteException,IOException;
 }
