@@ -66,8 +66,6 @@ public class ClientImplement {
         Integer i = null;
         while (true) {
             String inputText = sc.nextLine();
-            //if (inputText.equals("0"))
-              //  System.exit(-1);
             try {
                 i = Integer.parseInt(inputText);
                 break;

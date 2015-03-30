@@ -7,8 +7,8 @@ import java.util.ArrayList;
 /**
  * Created by Елена on 15.03.2015.
  */
-public class ServerImplement extends UnicastRemoteObject implements DataServer
-{
+public class ServerImplement extends UnicastRemoteObject implements DataServer {
+
     ArrayList<Book> books;
 
     public ServerImplement() throws RemoteException {
@@ -26,7 +26,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer
     public void paste (Book book) throws RemoteException {
         books.add(book);
     }
-
+    @Override
     public void edit(String article,Book book ) throws RemoteException{
         int index=1;
         for (Book dop: books){

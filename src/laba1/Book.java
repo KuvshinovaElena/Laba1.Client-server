@@ -3,8 +3,8 @@ package laba1;
 /**
  * Created by Елена on 14.03.2015.
  */
-public class Book
-{
+public class Book {
+
     private String article;
     private String autor;
     private String title;
@@ -13,53 +13,34 @@ public class Book
 
     Book (){
     }
-    /*----------------------------*/
-     public void setAutor(String autor)
-    {
+     public void setAutor(String autor) {
         this.autor=autor;
     }
-
-    public String getAutor ()
-    {
+    public String getAutor () {
         return autor;
     }
-    /*-------------------------*/
-    public void setTitle (String title)
-    {
+    public void setTitle (String title) {
         this.title=title;
     }
-
-    public String getTitle ()
-    {
+    public String getTitle () {
         return title;
     }
-    /*------------------------*/
-    public void setArticle (String article)
-    {
+    public void setArticle (String article) {
         this.article=article;
     }
-    public String getArticle ()
-    {
+    public String getArticle () {
         return article;
     }
-    /*--------------------------*/
-    public void setQuantity (int quantity)
-    {
+    public void setQuantity (int quantity) {
         this.quantity=quantity;
     }
-
-    public int getQuantity()
-    {
+    public int getQuantity() {
         return quantity;
     }
-    /*-----------------------------*/
-    public int getPrice()
-    {
+    public int getPrice() {
         return price;
     }
-
-    public void setPrise (int price)
-    {
+    public void setPrise (int price) {
         this.price=price;
     }
 }
