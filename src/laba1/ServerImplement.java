@@ -27,6 +27,16 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer
         books.add(book);
     }
 
+    public void edit(String article,Book book ) throws RemoteException{
+        int index=1;
+        for (Book dop: books){
+            if (book.getArticle()==article){
+                break;
+            }
+            index++;
+        }
+        books.set(index, book);
+    }
     @Override
     public ArrayList<Book> findByAutor(String autor) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();
@@ -76,7 +86,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer
     }
 
     @Override
-    public ArrayList<Book> findByPrice(double price) throws RemoteException {
+    public ArrayList<Book> findByPrice(int price) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();
         for (Book book: books) {
             if (book.getPrice() == price) {

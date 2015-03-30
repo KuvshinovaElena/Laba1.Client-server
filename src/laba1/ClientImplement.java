@@ -47,11 +47,10 @@ public class ClientImplement {
                     itemEdit();
                     break;
                 case 4:
-                    this.print(server.getAll());
+                    print(server.getAll());
                     break;
                 case 5:
-                    break;
-                case 6:
+                    itemSearch();
                     break;
                 case 0:
                     break;
@@ -95,7 +94,6 @@ public class ClientImplement {
             System.out.println("Enter the price:");
             book.setPrise(this.userInput());
             this.server.paste(book);
-            System.out.println("\n");
             num--;
         }
     }
@@ -130,7 +128,20 @@ public class ClientImplement {
         String article=scanner.nextLine();
         ArrayList<Book> list=server.findByArticle(article);
         if (!list.isEmpty()) print(list);
+        System.out.println("\nEnter the new information:");
+        System.out.println("\nEnter article:");
+        newbook.setArticle(this.scanner.nextLine());
+        System.out.println("Enter the name of the author:");
+        newbook.setAutor(this.scanner.nextLine());
+        System.out.println("Enter the name of the book");
+        newbook.setTitle(this.scanner.nextLine());
+        System.out.println("Enter the number of:");
+        newbook.setQuantity(this.userInput());
+        System.out.println("Enter the price:");
+        newbook.setPrise(this.userInput());
+        this.server.edit(article,newbook);
     }
+
     public void print(ArrayList<Book> books) throws RemoteException{
         if (!books.isEmpty()){
             for (Book book: books){
@@ -145,6 +156,62 @@ public class ClientImplement {
     }
 
     private void itemSearch() throws RemoteException{
+        System.out.println("\t\t\tSearch menu:");
+        System.out.println("1 Search by article");
+        System.out.println("2 Search by autor");
+        System.out.println("3 Search by title");
+        System.out.println("4 Search by quantity");
+        System.out.println("5 Search by price");
+        System.out.println("0 Back to menu");
+        System.out.print("\nEnter the menu: ");
+        int item = userInput();
+        while (true){
+            if (item<0 || item>5) {
+                System.out.println("This item not on the menu. Re-enter:");
+                item=userInput();
+            }
+            else break;
+        }
+        ArrayList<Book> list;
+        switch (item){
+            case 1:
+                System.out.println("\nEnter the article:");
+                String article=scanner.nextLine();
+                list=server.findByArticle(article);
+                if (!list.isEmpty()) print(list);
+                else System.out.print("\nNot found");
+                break;
+            case 2:
+                System.out.println("\nEnter the autor:");
+                String autor=scanner.nextLine();
+                list=server.findByAutor(autor);
+                if (!list.isEmpty()) print(list);
+                else System.out.print("\nNot found");
+                break;
+            case 3:
+                System.out.println("\nEnter the title:");
+                String title=scanner.nextLine();
+                list=server.findByTitle(title);
+                if (!list.isEmpty()) print(list);
+                else System.out.print("\nNot found");
+                break;
+            case 4:
+                System.out.println("\nEnter the quantity:");
+                int quantity=userInput();
+                list=server.findByQuantity(quantity);
+                if (!list.isEmpty()) print(list);
+                else System.out.print("\nNot found");
+                break;
+            case 5:
+                System.out.println("\nEnter the price:");
+                int price =userInput();
+                list=server.findByPrice(price);
+                if (!list.isEmpty()) print(list);
+                else System.out.print("\nNot found");
+                break;
+            case 6:
+                break;
+        }
 
     }
 

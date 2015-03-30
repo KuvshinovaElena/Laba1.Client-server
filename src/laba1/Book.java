@@ -9,7 +9,7 @@ public class Book
     private String autor;
     private String title;
     private int quantity;
-    private double price;
+    private int price;
 
     Book (){
     }
@@ -53,12 +53,12 @@ public class Book
         return quantity;
     }
     /*-----------------------------*/
-    public double getPrice()
+    public int getPrice()
     {
         return price;
     }
 
-    public void setPrise (double price)
+    public void setPrise (int price)
     {
         this.price=price;
     }
