@@ -34,7 +34,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
     public void edit(String article,Book book ) throws RemoteException,IOException{
         int index=1;
         for (Book dop: books){
-            if (book.getArticle()==article){
+            if (article.equals(book.getArticle())){
                 break;
             }
             index++;

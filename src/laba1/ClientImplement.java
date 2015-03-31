@@ -58,6 +58,7 @@ public class ClientImplement {
                     break;
                 case 0:
                     break;
+                default: break;
             }
             System.out.println("Would you like to return to the menu? Press 1 if yes, 0 if not");
             if (this.userInput()==1) Menu();
@@ -123,6 +124,7 @@ public class ClientImplement {
                 break;
             case 3:
                 break;
+            default: break;
         }
 
     }
