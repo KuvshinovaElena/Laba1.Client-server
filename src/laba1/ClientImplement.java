@@ -165,7 +165,7 @@ public class ClientImplement {
             newbook.setQuantity(this.userInput());
             System.out.println("Enter the price:");
             newbook.setPrise(this.userInput());
-            this.server.Index(article, newbook);
+            this.server.IndexEdit(article, newbook);
         }
         else System.out.println("Not found");
     }
