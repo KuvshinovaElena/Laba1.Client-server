@@ -2,6 +2,7 @@ package laba1;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
+import java.rmi.ServerException;
 import java.rmi.MarshalException;
 import java.rmi.UnmarshalException;
 import java.rmi.RemoteException;
@@ -151,30 +152,22 @@ public class ClientImplement {
     private void itemEdit() throws RemoteException,IOException {
         Book newbook= new Book();
         System.out.println("Enter the article of the book, the information you want to change:");
-        String article=scanner.nextLine();
-        ArrayList<Book> list=server.findByArticle(article);
-        if (!list.isEmpty()) print(list);       //Вывод коллекции на экран при условии, что она не пуста
-        System.out.println("\nEnter the new information:");
-        System.out.println("\nEnter article:");
-        article=this.scanner.nextLine();
-        Book book = new Book();
-        if (server.findByArticle(article).isEmpty())
-            book.setArticle(article);
-        else {
-            while(!server.findByArticle(article).isEmpty()) {
-                System.out.println("\nError! This article is already in the database. Retype article:");
-                article = this.scanner.nextLine();
-            }
+        String article=this.scanner.nextLine();
+        ArrayList<Book> list=this.server.findByArticle(article);
+        if (!list.isEmpty()) {
+            print(list);       //Вывод коллекции на экран при условии, что она не пуста
+            System.out.println("\nEnter the new information:");
+            System.out.println("Enter the name of the author:");
+            newbook.setAutor(this.scanner.nextLine());
+            System.out.println("Enter the name of the book");
+            newbook.setTitle(this.scanner.nextLine());
+            System.out.println("Enter the number of:");
+            newbook.setQuantity(this.userInput());
+            System.out.println("Enter the price:");
+            newbook.setPrise(this.userInput());
+            this.server.Index(article, newbook);
         }
-        System.out.println("Enter the name of the author:");
-        newbook.setAutor(this.scanner.nextLine());
-        System.out.println("Enter the name of the book");
-        newbook.setTitle(this.scanner.nextLine());
-        System.out.println("Enter the number of:");
-        newbook.setQuantity(this.userInput());
-        System.out.println("Enter the price:");
-        newbook.setPrise(this.userInput());
-        this.server.edit(article, newbook);
+        else System.out.println("Not found");
     }
 
     public void print(ArrayList<Book> books) throws RemoteException,IOException{
