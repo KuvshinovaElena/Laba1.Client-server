@@ -149,6 +149,7 @@ public class ClientImplement {
         }
 
     }
+    
     private void itemEdit() throws RemoteException,IOException {
         Book newbook= new Book();
         System.out.println("Enter the article of the book, the information you want to change:");
