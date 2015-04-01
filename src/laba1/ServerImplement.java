@@ -30,7 +30,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
 
         books.add(book);
     }
-    
+
     @Override
     //Редактирование элемента
     public void edit(int index,Book book) throws RemoteException{
