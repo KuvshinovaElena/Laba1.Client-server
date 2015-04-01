@@ -44,5 +44,5 @@ public class Book implements Serializable{
     public void setPrise (int price) {
         this.price=price;
     }
-    
+
 }

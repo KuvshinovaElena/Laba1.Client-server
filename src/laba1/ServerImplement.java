@@ -30,17 +30,16 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
 
         books.add(book);
     }
-
     @Override
     //Редактирование элемента
-    public void edit(int index,Book book) throws RemoteException{
+    public void edit(int index,Book book) throws RemoteException,IOException{
         books.set(index, book);
     }
     @Override
-    public void IndexEdit(String article, Book book) throws RemoteException {
+    public void IndexEdit(String article,Book book) throws RemoteException,IOException{
         int index=0;
-       for (Book dop: this.books){
-            if (dop.getArticle().equals(article)){
+        for (Book dop: this.books){
+            if (article.equals(book.getArticle())){
                 this.edit(index,book);
             }
             index++;
@@ -115,6 +114,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
     @Override
     public ArrayList<Book> delTheArticle(String article) throws RemoteException,IOException {
         ArrayList<Book> newbooks= new ArrayList<Book>();
+        newbooks=findByArticle(article);
         for (Book book: books) {
             if (!article.equals(book.getArticle())) {
                 newbooks.add(book);
