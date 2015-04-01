@@ -114,7 +114,6 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
     @Override
     public ArrayList<Book> delTheArticle(String article) throws RemoteException,IOException {
         ArrayList<Book> newbooks= new ArrayList<Book>();
-        newbooks=findByArticle(article);
         for (Book book: books) {
             if (!article.equals(book.getArticle())) {
                 newbooks.add(book);
