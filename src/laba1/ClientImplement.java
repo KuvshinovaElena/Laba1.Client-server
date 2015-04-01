@@ -23,47 +23,56 @@ public class ClientImplement {
         this.Menu();
     }
     private void Menu() throws IOException, NotBoundException {
-        System.out.println("\t\t\tMenu:");
-        System.out.println("1 Add to the list of books");
-        System.out.println("2 Remove from the list of books...");
-        System.out.println("3 Edit information about the book");
-        System.out.println("4 Show the full list of books");
-        System.out.println("5 Search by book list...");
-        System.out.println("0 Exit");
-        System.out.print("\nEnter the menu:");
-        int item = userInput();
-        while (true){
-            if (item<0 || item>6) {
-                System.out.println("This item not on the menu. Re-enter:");
-                item=userInput();
+        int item;
+        do{
+            System.out.println("\t\t\tMenu:");
+            System.out.println("1 Add to the list of books");
+            System.out.println("2 Remove from the list of books...");
+            System.out.println("3 Edit information about the book");
+            System.out.println("4 Show the full list of books");
+            System.out.println("5 Search by book list...");
+            System.out.println("0 Exit");
+            System.out.print("\nEnter the menu:");
+            item = userInput();
+            while (true){
+                if (item<0 || item>6) {
+                    System.out.println("This item not on the menu. Re-enter:");
+                    item=userInput();
+                }
+                else break;
             }
-            else break;
-        }
-        while (item!=0) {
             switch (item) {
-                case 1:
+                case 1: {
                     itemAdd();
                     break;
-                case 2:
+                }
+                case 2: {
                     itemRemove();
                     break;
-                case 3:
+                }
+                case 3: {
                     itemEdit();
                     break;
-                case 4:
+                }
+                case 4: {
                     print(server.getAll());
                     break;
-                case 5:
+                }
+                case 5: {
                     itemSearch();
                     break;
-                case 0:
+                }
+                case 0: {
                     break;
+                }
                 default: break;
             }
-            System.out.println("Would you like to return to the menu? Press 1 if yes, 0 if not");
-            if (this.userInput()==1) Menu();
-            else item=0;
-        }
+            if (item!=0) {
+                System.out.println("Would you like to return to the menu? Press 1 if yes, 0 if not");
+                if (this.userInput() == 1) Menu();
+                else item = 0;
+            }
+        }while (item!=0);
     }
 
     public int userInput()throws RemoteException,IOException{
@@ -87,7 +96,15 @@ public class ClientImplement {
         while (num!=0){
             Book book = new Book();
             System.out.println("\nEnter article:");
-            book.setArticle(this.scanner.nextLine());
+            String article=this.scanner.nextLine();
+            if (server.findByArticle(article).isEmpty())
+                book.setArticle(article);
+            else {
+                while(!server.findByArticle(article).isEmpty()) {
+                    System.out.println("\nError! This article is already in the database. Retype article:");
+                    article = this.scanner.nextLine();
+                }
+            }
             System.out.println("Enter the name of the author:");
             book.setAutor(this.scanner.nextLine());
             System.out.println("Enter the name of the book");
@@ -101,11 +118,10 @@ public class ClientImplement {
         }
     }
 
-    private void itemRemove () throws RemoteException,IOException {
+    private void itemRemove () throws RemoteException, IOException, NotBoundException {
         System.out.println("\t\t\tRemove menu:");
         System.out.println("1 Delete all");
         System.out.println("2 Remove by article");
-        System.out.println("3 Back to menu");
         System.out.print("\nEnter the menu: ");
         int item = userInput();
         while (true){
@@ -116,14 +132,18 @@ public class ClientImplement {
             else break;
         }
         switch (item){
-            case 1: server.delAll();
+            case 1:
+                if (server.delAll())
+                    System.out.println("The operation was successful");;
                 break;
-            case 2:
+            case 2: {
+                ArrayList<Book> list;
                 System.out.println("\nEnter the article of the book you want to delete");
-                server.delTheArticle(this.scanner.nextLine());
+                list=server.delTheArticle(this.scanner.nextLine());
+                if (list.isEmpty()) System.out.println("This book is not in the database.");
+                else System.out.println("The operation was successful");
                 break;
-            case 3:
-                break;
+            }
             default: break;
         }
 
@@ -133,7 +153,7 @@ public class ClientImplement {
         System.out.println("Enter the article of the book, the information you want to change:");
         String article=scanner.nextLine();
         ArrayList<Book> list=server.findByArticle(article);
-        if (!list.isEmpty()) print(list);
+        if (!list.isEmpty()) print(list);       //Вывод коллекции на экран при условии, что она не пуста
         System.out.println("\nEnter the new information:");
         System.out.println("\nEnter article:");
         newbook.setArticle(this.scanner.nextLine());
@@ -161,14 +181,13 @@ public class ClientImplement {
         else System.out.println("Em1pty");
     }
 
-    private void itemSearch() throws RemoteException,IOException{
+    private void itemSearch() throws RemoteException, IOException, NotBoundException {
         System.out.println("\t\t\tSearch menu:");
         System.out.println("1 Search by article");
         System.out.println("2 Search by autor");
         System.out.println("3 Search by title");
         System.out.println("4 Search by quantity");
         System.out.println("5 Search by price");
-        System.out.println("0 Back to menu");
         System.out.print("\nEnter the menu: ");
         int item = userInput();
         while (true){
@@ -213,10 +232,9 @@ public class ClientImplement {
                 int price =userInput();
                 list=server.findByPrice(price);
                 if (!list.isEmpty()) print(list);
-                else System.out.print("\nNot found");
+                else System.out.println("\nNot found");
                 break;
-            case 0:
-                break;
+            default: break;
         }
 
     }
