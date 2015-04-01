@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-
+import java.rmi.ServerException;
+import java.lang.IndexOutOfBoundsException;
 
 /**
  * Created by Елена on 15.03.2015.
@@ -31,15 +32,18 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
     }
     @Override
     //Редактирование элемента
-    public void edit(String article,Book book) throws RemoteException,IOException{
-        int index=1;
-        for (Book dop: books){
-            if (dop.getArticle()== article){
-                break;
+    public void edit(int index,Book book) throws RemoteException{
+        books.set(index, book);
+    }
+    @Override
+    public void Index(String article, Book book) throws RemoteException {
+        int index=0;
+       for (Book dop: this.books){
+            if (dop.getArticle().equals(article)){
+                this.edit(index,book);
             }
             index++;
         }
-        books.set(index, book);
     }
     //Поиск элемента по автору
     @Override
@@ -112,7 +116,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         ArrayList<Book> newbooks= new ArrayList<Book>();
         newbooks=findByArticle(article);
         for (Book book: books) {
-            if (!article.equals(book.getArticle())) {
+            if (!book.getArticle().equals(article)) {
                 newbooks.add(book);
             }
         }
