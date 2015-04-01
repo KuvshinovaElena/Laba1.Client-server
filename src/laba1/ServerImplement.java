@@ -31,10 +31,10 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
     }
     @Override
     //Редактирование элемента
-    public void edit(String article,Book book ) throws RemoteException,IOException{
+    public void edit(String article,Book book) throws RemoteException,IOException{
         int index=1;
         for (Book dop: books){
-            if (article.equals(book.getArticle())){
+            if (dop.getArticle()== article){
                 break;
             }
             index++;
@@ -49,7 +49,6 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
             if (autor.equals(book.getAutor())){
                 newbooks.add(book);
             }
-            else  System.out.println("This book is not in the database.");
         }
         return newbooks;
     }
@@ -61,7 +60,6 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
             if (title.equals(book.getTitle())) {
                 newbooks.add(book);
             }
-            else  System.out.println("This book is not in the database.");
         }
         return newbooks;
     }
@@ -73,7 +71,6 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
             if (article.equals(book.getArticle())) {
                 newbooks.add(book);
             }
-            else  System.out.println("This book is not in the database.");
         }
         return newbooks;
     }
@@ -85,7 +82,6 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
             if (book.getQuantity() == quantity) {
                 newbooks.add(book);
             }
-            else  System.out.println("This book is not in the database.");
         }
         return newbooks;
     }
@@ -97,25 +93,30 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
             if (book.getPrice() == price) {
                 newbooks.add(book);
             }
-            else  System.out.println("This book is not in the database.");
         }
         return newbooks;
     }
 
     @Override
-    public void delAll() throws RemoteException {
-        this.books.clear();
+    public boolean delAll() throws RemoteException {
+        if (!books.isEmpty()) {
+            this.books.clear();
+            return true;
+        }
+        else
+            return false;
     }
 
     @Override
-    public void delTheArticle(String article) throws RemoteException,IOException {
+    public ArrayList<Book> delTheArticle(String article) throws RemoteException,IOException {
         ArrayList<Book> newbooks= new ArrayList<Book>();
-        for(Book book: this.books) {
-            if (article.equals(book.getArticle()))
+        newbooks=findByArticle(article);
+        for (Book book: books) {
+            if (!article.equals(book.getArticle())) {
                 newbooks.add(book);
-            else
-                System.out.println("This book is not in the database.");
+            }
         }
         this.books=newbooks;
+        return this.books;
     }
 }

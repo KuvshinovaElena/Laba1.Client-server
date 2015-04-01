@@ -17,6 +17,6 @@ public interface DataServer extends Remote {
     public ArrayList<Book> findByArticle(String article) throws RemoteException, IOException;
     public ArrayList<Book> findByQuantity(int quantity) throws RemoteException, IOException;
     public ArrayList<Book> findByPrice(int price) throws RemoteException, IOException;
-    public void delAll() throws RemoteException;
-    void delTheArticle(String article) throws RemoteException,IOException;
+    public boolean delAll() throws RemoteException;
+    ArrayList<Book> delTheArticle(String article) throws RemoteException,IOException;
 }

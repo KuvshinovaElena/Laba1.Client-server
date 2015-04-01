@@ -68,7 +68,7 @@ public class ClientImplement {
                 default: break;
             }
             if (item!=0) {
-                System.out.println("Would you like to return to the menu? Press 1 if yes, 0 if not");
+                System.out.println("\nWould you like to return to the menu? Press 1 if yes, 0 if not");
                 if (this.userInput() == 1) Menu();
                 else item = 0;
             }
@@ -156,7 +156,16 @@ public class ClientImplement {
         if (!list.isEmpty()) print(list);       //Вывод коллекции на экран при условии, что она не пуста
         System.out.println("\nEnter the new information:");
         System.out.println("\nEnter article:");
-        newbook.setArticle(this.scanner.nextLine());
+        article=this.scanner.nextLine();
+        Book book = new Book();
+        if (server.findByArticle(article).isEmpty())
+            book.setArticle(article);
+        else {
+            while(!server.findByArticle(article).isEmpty()) {
+                System.out.println("\nError! This article is already in the database. Retype article:");
+                article = this.scanner.nextLine();
+            }
+        }
         System.out.println("Enter the name of the author:");
         newbook.setAutor(this.scanner.nextLine());
         System.out.println("Enter the name of the book");
@@ -192,7 +201,7 @@ public class ClientImplement {
         int item = userInput();
         while (true){
             if (item<0 || item>5) {
-                System.out.println("This item not on the menu. Re-enter:");
+                System.out.println("This item not on the menu. Retype");
                 item=userInput();
             }
             else break;
