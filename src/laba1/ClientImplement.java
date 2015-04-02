@@ -157,6 +157,7 @@ public class ClientImplement {
         ArrayList<Book> list=this.server.findByArticle(article);
         if (!list.isEmpty()) {
             print(list);       //Вывод коллекции на экран при условии, что она не пуста
+            newbook.setArticle(article);
             System.out.println("\nEnter the new information:");
             System.out.println("Enter the name of the author:");
             newbook.setAutor(this.scanner.nextLine());
