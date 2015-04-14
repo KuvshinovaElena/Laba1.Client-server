@@ -1,5 +1,7 @@
 package laba1;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.ServerException;
@@ -48,11 +50,23 @@ public class ClientImplement {
                     break;
                 }
                 case 2: {
-                    itemRemove();
+                    try {
+                        itemRemove();
+                    } catch (TransformerException e) {
+                        e.printStackTrace();
+                    } catch (ParserConfigurationException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 }
                 case 3: {
-                    itemEdit();
+                    try {
+                        itemEdit();
+                    } catch (TransformerException e) {
+                        e.printStackTrace();
+                    } catch (ParserConfigurationException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 }
                 case 4: {
@@ -91,7 +105,7 @@ public class ClientImplement {
         return i;
     }
 
-    private void itemAdd() throws RemoteException,IOException {
+    private void itemAdd() throws RemoteException, IOException {
         System.out.println("\nEnter the number of titles:");
         int num = userInput();
         while (num!=0){
@@ -114,12 +128,18 @@ public class ClientImplement {
             book.setQuantity(this.userInput());
             System.out.println("Enter the price:");
             book.setPrise(this.userInput());
-            server.paste(book);
+            try {
+                server.paste(book);
+            } catch (TransformerException e) {
+                e.printStackTrace();
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            }
             num--;
         }
     }
 
-    private void itemRemove () throws RemoteException, IOException, NotBoundException {
+    private void itemRemove () throws RemoteException, IOException, TransformerException, ParserConfigurationException {
         System.out.println("\t\t\tRemove menu:");
         System.out.println("1 Delete all");
         System.out.println("2 Remove by article");
@@ -150,7 +170,7 @@ public class ClientImplement {
 
     }
 
-    private void itemEdit() throws RemoteException,IOException {
+    private void itemEdit() throws RemoteException, IOException, TransformerException, ParserConfigurationException {
         Book newbook= new Book();
         System.out.println("Enter the article of the book, the information you want to change:");
         String article=this.scanner.nextLine();
