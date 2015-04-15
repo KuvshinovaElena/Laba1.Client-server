@@ -20,10 +20,16 @@ public class ClientImplement {
     private DataServer server;
     private Scanner scanner;
 
-    ClientImplement(DataServer server) throws IOException, NotBoundException {
+    ClientImplement(DataServer server) throws IOException {
         this.server = server;
         this.scanner = new Scanner(System.in);
-        this.Menu();
+        try
+        {
+            this.Menu();
+        } catch (NotBoundException e)
+        {
+            e.printStackTrace();
+        }
     }
     private void Menu() throws IOException, NotBoundException {
         int item;
@@ -50,23 +56,11 @@ public class ClientImplement {
                     break;
                 }
                 case 2: {
-                    try {
-                        itemRemove();
-                    } catch (TransformerException e) {
-                        e.printStackTrace();
-                    } catch (ParserConfigurationException e) {
-                        e.printStackTrace();
-                    }
+                    itemRemove();
                     break;
                 }
                 case 3: {
-                    try {
                         itemEdit();
-                    } catch (TransformerException e) {
-                        e.printStackTrace();
-                    } catch (ParserConfigurationException e) {
-                        e.printStackTrace();
-                    }
                     break;
                 }
                 case 4: {
@@ -84,8 +78,7 @@ public class ClientImplement {
             }
             if (item!=0) {
                 System.out.println("\nWould you like to return to the menu? Press 1 if yes, 0 if not");
-                if (this.userInput() == 1) Menu();
-                else item = 0;
+                if (this.userInput() != 1) return;
             }
         }while (item!=0);
     }
@@ -119,6 +112,7 @@ public class ClientImplement {
                     System.out.println("\nError! This article is already in the database. Retype article:");
                     article = this.scanner.nextLine();
                 }
+                book.setArticle(article);
             }
             System.out.println("Enter the name of the author:");
             book.setAutor(this.scanner.nextLine());
@@ -127,19 +121,13 @@ public class ClientImplement {
             System.out.println("Enter the number of:");
             book.setQuantity(this.userInput());
             System.out.println("Enter the price:");
-            book.setPrise(this.userInput());
-            try {
-                server.paste(book);
-            } catch (TransformerException e) {
-                e.printStackTrace();
-            } catch (ParserConfigurationException e) {
-                e.printStackTrace();
-            }
+            book.setPrice(this.userInput());
+            server.paste(book);
             num--;
         }
     }
 
-    private void itemRemove () throws RemoteException, IOException, TransformerException, ParserConfigurationException {
+    private void itemRemove () throws RemoteException, IOException {
         System.out.println("\t\t\tRemove menu:");
         System.out.println("1 Delete all");
         System.out.println("2 Remove by article");
@@ -170,7 +158,7 @@ public class ClientImplement {
 
     }
 
-    private void itemEdit() throws RemoteException, IOException, TransformerException, ParserConfigurationException {
+    private void itemEdit() throws RemoteException, IOException{
         Book newbook= new Book();
         System.out.println("Enter the article of the book, the information you want to change:");
         String article=this.scanner.nextLine();
@@ -186,7 +174,7 @@ public class ClientImplement {
             System.out.println("Enter the number of:");
             newbook.setQuantity(this.userInput());
             System.out.println("Enter the price:");
-            newbook.setPrise(this.userInput());
+            newbook.setPrice(this.userInput());
             this.server.IndexEdit(article, newbook);
         }
         else System.out.println("Not found");

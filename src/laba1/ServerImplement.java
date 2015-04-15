@@ -37,10 +37,19 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
     private static final String QUANTITY = "Quantity";
     private static final String PRICE = "Price";
 
-    public ServerImplement() throws IOException, SAXException, ParserConfigurationException {
+    public ServerImplement() throws IOException {
         super();
         this.books=new ArrayList<Book>();
-        this.XMLReader();
+        try
+        {
+            this.XMLReader();
+        } catch (ParserConfigurationException e)
+        {
+            e.printStackTrace();
+        } catch (SAXException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -50,14 +59,32 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
 
     @Override
     //Добавление элемента в конец списка
-    public void paste (Book book) throws RemoteException, TransformerException, ParserConfigurationException {
+    public void paste (Book book) throws RemoteException{
         books.add(book);
-        this.XMLWriter();
+        try
+        {
+            this.XMLWriter();
+        } catch (ParserConfigurationException e)
+        {
+            e.printStackTrace();
+        } catch (TransformerException e)
+        {
+            e.printStackTrace();
+        }
     }
     @Override
-    public void edit(int index,Book book) throws RemoteException{
+    public void edit(int index,Book book) throws RemoteException {
         books.set(index, book);
-        this.XMLWriter();
+        try
+        {
+            this.XMLWriter();
+        } catch (ParserConfigurationException e)
+        {
+            e.printStackTrace();
+        } catch (TransformerException e)
+        {
+            e.printStackTrace();
+        }
     }
     @Override
     public void IndexEdit(String article,Book book) throws RemoteException {
@@ -136,7 +163,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
     }
 
     @Override
-    public ArrayList<Book> delTheArticle(String article) throws RemoteException {
+    public ArrayList<Book> delTheArticle(String article) throws RemoteException{
         ArrayList<Book> newbooks= new ArrayList<Book>();
         for (Book book: books) {
             if (!article.equals(book.getArticle())) {
@@ -144,7 +171,16 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
             }
         }
         this.books=newbooks;
-        //this.XMLWriter();
+        try
+        {
+            this.XMLWriter();
+        } catch (ParserConfigurationException e)
+        {
+            e.printStackTrace();
+        } catch (TransformerException e)
+        {
+            e.printStackTrace();
+        }
         return this.books;
     }
 
@@ -192,16 +228,17 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
     public void XMLReader () throws ParserConfigurationException, IOException, SAXException {
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setValidating(false);
         File fxml=new File(FIlE_PATH);
         if (fxml.length() == 0) return;
 
         DocumentBuilder builder = dbf.newDocumentBuilder();
         Document document = builder.parse(fxml);
-        NodeList readerList = document.getDocumentElement();
+        NodeList readerList = document.getDocumentElement().getChildNodes();
         for (int i = 0; i<readerList.getLength();i++){
             Node node = readerList.item(i);
             if (node.getNodeName() == ELEMENT){
-                Book book = new Book();
+               Book book = new Book();
                 NodeList childNodes = node.getChildNodes();
                 for (int j = 0; j < childNodes.getLength(); j++) {
                     Node cNode = childNodes.item(j);
@@ -225,7 +262,6 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
                             book.setPrice(Integer.parseInt(childNoteContent));
                             break;
                     }
-
                 }
             }
         }

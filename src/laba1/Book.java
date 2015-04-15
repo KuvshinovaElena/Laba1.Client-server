@@ -14,7 +14,8 @@ public class Book implements Serializable{
 
     Book (){
     }
-     public void setAutor(String autor) {
+
+    public void setAutor(String autor) {
         this.autor=autor;
     }
     public String getAutor () {
