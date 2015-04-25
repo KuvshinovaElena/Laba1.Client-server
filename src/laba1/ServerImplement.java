@@ -225,6 +225,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         StreamResult result = new StreamResult(fxml);
         transformer.transform(source,result);
     }
+
     public void XMLReader () throws ParserConfigurationException, IOException, SAXException {
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
