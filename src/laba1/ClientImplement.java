@@ -20,7 +20,7 @@ public class ClientImplement {
     private DataServer server;
     private Scanner scanner;
 
-    ClientImplement(DataServer server) throws IOException {
+    public ClientImplement(DataServer server) throws IOException {
         this.server = server;
         this.scanner = new Scanner(System.in);
         try
@@ -135,7 +135,7 @@ public class ClientImplement {
         int item = userInput();
         while (true){
             if (item<1 || item>3) {
-                System.out.println("This item not on the menu. Re-enter:");
+                System.out.println("This item not on the menu. Retype:");
                 item=userInput();
             }
             else break;
@@ -149,8 +149,6 @@ public class ClientImplement {
                 ArrayList<Book> list;
                 System.out.println("\nEnter the article of the book you want to delete");
                 list=server.delTheArticle(this.scanner.nextLine());
-                if (list.isEmpty()) System.out.println("This book is not in the database.");
-                else System.out.println("The operation was successful");
                 break;
             }
             default: break;
@@ -190,7 +188,7 @@ public class ClientImplement {
                 System.out.println("Price:"+book.getPrice());
             }
         }
-        else System.out.println("Em1pty");
+        else System.out.println("Empty");
     }
 
     private void itemSearch() throws RemoteException, IOException, NotBoundException {

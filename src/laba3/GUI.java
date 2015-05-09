@@ -8,7 +8,10 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -17,24 +20,32 @@ import laba1.ClientImplement;
 import laba1.DataServer;
 import laba1.ServerImplement;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.Image;
 import java.io.IOException;
+import java.rmi.NotBoundException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.AbstractList;
 import java.util.ArrayList;
+
 
 /**
  * Created by mvideo on 25.04.2015.
  */
 public class GUI extends Application{
         private ObservableList<Object> data = FXCollections.observableArrayList();
-        private ArrayList<Book> books;
-        private DataServer server;
-        TextField text;
-        Stage stage;
 
-        private void init(Stage primaryStage) throws IOException {
+    private void init(Stage primaryStage) throws IOException, NotBoundException {
             Group root = new Group();
             primaryStage.setScene(new Scene(root));
             primaryStage.setTitle("BOOK DATABASE 2015");
+
+            Registry registry = LocateRegistry.getRegistry(1099);
+            String objectName = "rmi://localhost/book";
+            DataServer server= (DataServer)registry.lookup(objectName);
+
             data.addAll(server.getAll());
             TableColumn articleCol = new TableColumn();
             articleCol.setText("Article");
@@ -90,12 +101,13 @@ public class GUI extends Application{
             root.getChildren().add(vBox);
         }
 
-        public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) throws Exception {
             init(primaryStage);
             primaryStage.show();
         }
         public static void main(String[] args) {
             launch(args);
         }
+
 
 }

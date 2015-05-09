@@ -16,11 +16,7 @@ import java.rmi.registry.Registry;
  */
 
 public class Server {
-
-
-
-    public static void main (String [] args) throws IOException
-    {
+    public static void main (String [] args) throws IOException {
         ServerImplement server = new ServerImplement();      //Создание удалённого объекта
         Registry registry = LocateRegistry.createRegistry(1099); // регистрация удаленного объекта в реестре rmiregistry
         String nameServer = "rmi://localhost/book";      //Название удалённого объекта

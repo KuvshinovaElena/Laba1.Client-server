@@ -156,6 +156,13 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
     public boolean delAll() throws RemoteException {
         if (!books.isEmpty()) {
             this.books.clear();
+            try {
+                XMLWriter();
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            } catch (TransformerException e) {
+                e.printStackTrace();
+            }
             return true;
         }
         else
@@ -171,14 +178,11 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
             }
         }
         this.books=newbooks;
-        try
-        {
+        try {
             this.XMLWriter();
-        } catch (ParserConfigurationException e)
-        {
+        } catch (ParserConfigurationException e) {
             e.printStackTrace();
-        } catch (TransformerException e)
-        {
+        } catch (TransformerException e) {
             e.printStackTrace();
         }
         return this.books;
@@ -231,7 +235,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setValidating(false);
         File fxml=new File(FIlE_PATH);
-        if (fxml.length() == 0) return;
+        if (fxml.length() == 0) return ;
 
         DocumentBuilder builder = dbf.newDocumentBuilder();
         Document document = builder.parse(fxml);
@@ -264,8 +268,10 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
                             break;
                     }
                 }
+                books.add(book);
             }
         }
+
     }
 }
 
