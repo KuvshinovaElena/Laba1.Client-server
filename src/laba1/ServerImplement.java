@@ -248,9 +248,10 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
                 for (int j = 0; j < childNodes.getLength(); j++) {
                     Node cNode = childNodes.item(j);
                     String childNoteContent;
-                    childNoteContent = cNode.getLastChild().getTextContent().trim();
-                    book.setArticle(childNoteContent);
                     switch (cNode.getNodeName()) {
+                        case ARTICLE:
+                            childNoteContent = cNode.getLastChild().getTextContent().trim();
+                            book.setArticle(childNoteContent);
                         case AUTOR:
                             childNoteContent = cNode.getLastChild().getTextContent().trim();
                             book.setAutor(childNoteContent);
