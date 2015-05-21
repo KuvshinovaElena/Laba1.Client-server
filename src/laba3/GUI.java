@@ -5,12 +5,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -20,16 +23,20 @@ import laba1.DataServer;
 import laba1.ServerImplement;
 
 import javax.swing.*;
+import javax.xml.stream.XMLStreamException;
 import java.awt.*;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 
 /**
@@ -38,17 +45,20 @@ import java.util.ArrayList;
 public class GUI extends Application{
     private ObservableList<Object> data = FXCollections.observableArrayList();
     Stage stage;
+    static ArrayList<String> records;
+    private DataServer clientService;
+    private Registry clientRegistry;
 
-    private void init(final Stage primaryStage, final Stage priStage) throws IOException, NotBoundException {
+    private void init(final Stage primaryStage) throws IOException, NotBoundException {
             Group root = new Group();
             primaryStage.setScene(new Scene(root));
             primaryStage.setTitle("BOOK DATABASE 2015");
 
-            Registry registry = LocateRegistry.getRegistry(1099);
+            clientRegistry = LocateRegistry.getRegistry(1099);
             String objectName = "rmi://localhost/book";
-            DataServer server= (DataServer)registry.lookup(objectName);
+            clientService = (DataServer)clientRegistry.lookup(objectName);
 
-            data.addAll(server.getAll());
+            data.addAll(clientService.getAll());
 
             TableColumn articleCol = new TableColumn();
             articleCol.setText("Article");
@@ -72,37 +82,64 @@ public class GUI extends Application{
             priceCol.setText("Price");
             priceCol.setCellValueFactory(new PropertyValueFactory("Price"));
 
-            TableView tableView = new TableView();
+            final TableView tableView = new TableView();
             tableView.setItems(data);
             tableView.getColumns().addAll(articleCol, autorCol, titleCol, quantityCol, priceCol);
 
             root.getChildren().add(tableView);
             HBox hBox = new HBox();
 
-            Button add = new Button("Add");
+            Button add = new Button("ADD");
             add.setPrefWidth(170);
-            add.setStyle("-fx-base: rgb(40,155,220);");
+            add.setStyle("-fx-text-fill: white;-fx-base: rgb(40,155,220);");
             add.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     if(stage != null) {
                         stage.close();
                     }
-                    stage = new AddScene(priStage);
+                    stage = new AddScene(data,clientService);
+                    stage.setTitle("ADD IN DATABASE");
                 }
             });
 
-            Button remove = new Button("Remove");
+            Button remove = new Button("REMOVE");
             remove.setPrefWidth(170);
-            remove.setStyle("-fx-base: rgb(40,155,220);");
+            remove.setStyle("-fx-text-fill:white; -fx-base: rgb(40,155,220);");
+            remove.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    Book book = (Book)tableView.getSelectionModel().getSelectedItem();
+                    try {
+                        clientService.delTheArticle(book.getArticle());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    data.remove(book);
+                }
+            });
 
-            Button edit = new Button("  Edit  ");
+            Button edit = new Button("EDIT");
             edit.setPrefWidth(170);
-            edit.setStyle("-fx-base: rgb(40,155,220);");
+            edit.setStyle("-fx-text-fill:white; -fx-base: rgb(40,155,220);");
+            edit.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    Group root = new Group();
+                    try {
+                        Book book = (Book)tableView.getSelectionModel().getSelectedItem();
+                        stage = new EditScene(root, data, clientService, book);
+                        stage.setTitle("EDITING DATABASE");
+                        tableView.getSelectionModel().clearSelection();
+                    }catch (NullPointerException e){
+                    }
+                }
+            });
 
-            Button search = new Button("Search");
+            Button search = new Button("SEARCH");
             search.setPrefWidth(170);
-            search.setStyle("-fx-base: rgb(40,155,220);");
+            search.setStyle("-fx-text-fill:white; -fx-base: rgb(40,155,220);");
+
 
             hBox.getChildren().add(add);
             hBox.setSpacing(5);
@@ -116,14 +153,11 @@ public class GUI extends Application{
             vBox.getChildren().addAll(tableView, hBox);
             root.getChildren().add(vBox);
         }
-    public void start(Stage primaryStage, Stage priStage) throws Exception {
-        init(primaryStage,priStage);
+    public void start(Stage primaryStage) throws Exception {
+        init(primaryStage);
         primaryStage.show();
     }
-
-        public static void main(String[] args) {
+    public static void main(String[] args) {
             launch(args);
         }
-
-
 }

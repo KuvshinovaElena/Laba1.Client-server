@@ -8,48 +8,40 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import laba1.Book;
 import laba1.DataServer;
 
-import javax.xml.stream.XMLStreamException;
-import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 /**
- * Created by Елена on 09.05.2015.
+ * Created by Елена on 21.05.2015.
  */
-public class AddScene  extends MyScene{
-
-    public AddScene(final ObservableList<Object> data, final DataServer server){
-        final Group root = new Group();
+public class EditScene extends MyScene {
+    public EditScene(Group root, final ObservableList<Object> data, final DataServer server, final Book book){
         setScene(new Scene(root));
 
         Label labell = new Label("Article");
-        final TextField text1 = new TextField();
+        final TextField text1 = new TextField("abc");
+        text1.setText(book.getArticle());
         text1.setPrefWidth(300);
 
         Label label2 = new Label("Autor");
-        final TextField text2 = new TextField();
+        final TextField text2 = new TextField(book.getAutor());
         text2.setPrefWidth(300);
 
-
         Label label3 = new Label("Title");
-        final TextField text3 = new TextField();
+        final TextField text3 = new TextField(book.getTitle());
         text3.setPrefWidth(300);
-
         Label label4 = new Label("Quantity");
-        final TextField text4 = new TextField();
+        final TextField text4 = new TextField(Integer.toString(book.getQuantity()));
         text4.setPrefWidth(300);
 
         Label label5 = new Label("Price");
-        final TextField text5 = new TextField();
+        final TextField text5 = new TextField(Integer.toString(book.getPrice()));
         text5.setPrefWidth(300);
 
-        Button addbut = new Button("ADD");
+        Button addbut = new Button("OK");
         addbut.setPrefWidth(300);
         addbut.setStyle("-fx-text-fill: white;-fx-base: rgb(40,155,220);");
         addbut.setOnAction(new EventHandler<ActionEvent>() {
@@ -75,7 +67,7 @@ public class AddScene  extends MyScene{
                     book.setQuantity(quantity);
                     book.setPrice(price);
                     try {
-                        server.paste(book);
+                        server.IndexEdit(article,book);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -90,4 +82,5 @@ public class AddScene  extends MyScene{
         root.getChildren().add(vBox1);
         this.show();
     }
+
 }

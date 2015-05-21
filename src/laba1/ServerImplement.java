@@ -73,7 +73,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         }
     }
     @Override
-    public void edit(int index,Book book) throws RemoteException {
+    public void edit(int index, Book book) throws RemoteException {
         books.set(index, book);
         try
         {
@@ -90,8 +90,8 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
     public void IndexEdit(String article,Book book) throws RemoteException {
         int index=0;
         for (Book dop: this.books){
-            if (article.equals(book.getArticle())){
-                this.edit(index,book);
+            if (article.equals(book.getArticle())) {
+               edit(index, book);
             }
             index++;
         }
@@ -121,6 +121,29 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
     //Поиск элемента по артикулу
     @Override
     public ArrayList<Book> findByArticle(String article) throws RemoteException {
+        ArrayList<Book> newbooks = new ArrayList<Book>();
+        for (Book book: books) {
+            if (article.equals(book.getArticle())) {
+                newbooks.add(book);
+            }
+        }
+        return newbooks;
+    }
+    @Override
+    public ArrayList<Book> findByArticle (String article, String newarticle)throws RemoteException{
+        ArrayList<Book> newbooks = new ArrayList<Book>();
+        if (article == newarticle){
+            return newbooks;
+        }
+        for (Book book: books) {
+            if (newarticle.equals(book.getArticle())) {
+                newbooks.add(book);
+            }
+        }
+        return newbooks;
+    }
+
+    public ArrayList<Book> findByArticleLiss (String article){
         ArrayList<Book> newbooks = new ArrayList<Book>();
         for (Book book: books) {
             if (article.equals(book.getArticle())) {

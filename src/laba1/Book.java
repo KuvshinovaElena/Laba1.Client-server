@@ -12,7 +12,7 @@ public class Book implements Serializable{
     private int quantity;
     private int price;
 
-    Book (){
+   public Book (){
     }
 
     public void setAutor(String autor) {

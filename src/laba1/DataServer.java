@@ -20,6 +20,7 @@ public interface DataServer extends Remote {
     public ArrayList<Book> findByAutor(String autor) throws RemoteException;
     public ArrayList<Book> findByTitle(String title) throws RemoteException;
     public ArrayList<Book> findByArticle(String article) throws RemoteException;
+    public ArrayList<Book> findByArticle (String article, String newarticle) throws RemoteException;
     public ArrayList<Book> findByQuantity(int quantity) throws RemoteException;
     public ArrayList<Book> findByPrice(int price) throws RemoteException;
     public boolean delAll() throws RemoteException;
