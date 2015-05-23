@@ -18,9 +18,9 @@ import java.rmi.RemoteException;
  * Created by Елена on 21.05.2015.
  */
 public class EditScene extends MyScene {
-    public EditScene(Group root, final ObservableList<Object> data, final DataServer server, final Book book){
+    public EditScene(Group root, final ObservableList<Book> data, final DataServer server, final Book book){
         setScene(new Scene(root));
-
+        final String article = book.getArticle();
         Label labell = new Label("Article");
         final TextField text1 = new TextField("abc");
         text1.setText(book.getArticle());
@@ -47,10 +47,10 @@ public class EditScene extends MyScene {
         addbut.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                String article = checkEnter(text1);
-                if (article!=null) {
+                String newarticle = checkEnter(text1);
+                if (newarticle!=null) {
                     try {
-                        article = checkArticle(null,text1, server);
+                        newarticle = checkArticle(article,text1, server);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -59,19 +59,27 @@ public class EditScene extends MyScene {
                 String title  = checkEnter(text3);
                 int quantity = checkInputInt(text4);
                 int price = checkInputInt(text5);
-                if ((article!=null)&&(autor!=null)&&(title!=null)&&(quantity!=-1)&&(price!=-1)) {
-                    Book book = new Book();
-                    book.setArticle(article);
-                    book.setAutor(autor);
-                    book.setTitle(title);
-                    book.setQuantity(quantity);
-                    book.setPrice(price);
-                    try {
-                        server.IndexEdit(article,book);
-                    } catch (RemoteException e) {
+                if ((newarticle!=null)&&(autor!=null)&&(title!=null)&&(quantity!=-1)&&(price!=-1)) {
+                    Book newbook = new Book();
+                    newbook.setArticle(newarticle);
+                    newbook.setAutor(autor);
+                    newbook.setTitle(title);
+                    newbook.setQuantity(quantity);
+                    newbook.setPrice(price);
+                    try
+                    {
+                        int index=0;
+                        server.IndexEdit(newarticle,newbook);
+                        for (Book i: data){
+                            if (i.getArticle()==article)
+                                data.set(index,newbook);
+                            index++;
+                        }
+                    } catch (RemoteException e)
+                    {
                         e.printStackTrace();
                     }
-                    data.add(book);
+
                     close();
                 }
             }

@@ -33,16 +33,20 @@ public class MyScene extends Stage {
         }
         return num;
     }
-    public static String checkArticle (TextField article,TextField newarticle, DataServer server) throws RemoteException {
+    public static String checkArticle (String article,TextField newarticle, DataServer server) throws RemoteException {
         String str1,str2;
-        str1 = article.getText();
+        if (article!=null) {
+            str1 = article;
+        }
+        else
+            str1=null;
         str2 = newarticle.getText();
         if (server.findByArticle(str1,str2).isEmpty())
             return str2;
         else {
-            article.clear();
-            article.setStyle("-fx-opacity: 0.5; -fx-background-color: red");
-            article.setPromptText("This article is already in the database.");
+            newarticle.clear();
+            newarticle.setStyle("-fx-opacity: 0.5; -fx-background-color: red");
+            newarticle.setPromptText("This article is already in the database.");
             return null;
         }
     }

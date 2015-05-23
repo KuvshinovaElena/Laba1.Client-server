@@ -16,7 +16,7 @@ public interface DataServer extends Remote {
     public void paste(Book book) throws RemoteException;
     public ArrayList<Book> getAll() throws RemoteException;
     public void edit(int index,Book book) throws RemoteException;
-    public void IndexEdit(String article, Book book) throws RemoteException;
+    public int IndexEdit(String article, Book book) throws RemoteException;
     public ArrayList<Book> findByAutor(String autor) throws RemoteException;
     public ArrayList<Book> findByTitle(String title) throws RemoteException;
     public ArrayList<Book> findByArticle(String article) throws RemoteException;

@@ -165,10 +165,12 @@ public class ClientImplement {
             print(list);       //Вывод коллекции на экран при условии, что она не пуста
             newbook.setArticle(article);
             System.out.println("\nEnter the new information:");
-            System.out.println("Enter the article of the book, the information you want to change:");
+            System.out.println("Enter the article:");
             String newarticle = this.scanner.nextLine();
             if (server.findByArticle(article,newarticle).isEmpty())
+            {
                 newbook.setArticle(newarticle);
+            }
             else {
                 while (!server.findByArticle(article,newarticle).isEmpty()) {
                     System.out.println("\nError! This article is already in the database. Retype article:");

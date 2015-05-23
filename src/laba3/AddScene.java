@@ -24,7 +24,7 @@ import java.util.ArrayList;
  */
 public class AddScene  extends MyScene{
 
-    public AddScene(final ObservableList<Object> data, final DataServer server){
+    public AddScene(final ObservableList<Book> data, final DataServer server){
         final Group root = new Group();
         setScene(new Scene(root));
 
