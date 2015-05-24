@@ -1,5 +1,6 @@
 package laba1;
 
+import javafx.stage.Stage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -28,6 +29,7 @@ import java.lang.IndexOutOfBoundsException;
 public class ServerImplement extends UnicastRemoteObject implements DataServer {
 
     ArrayList<Book> books;
+    ArrayList <RemoutInterface> clients = new ArrayList<RemoutInterface>();
     private static final String FIlE_PATH = "src/BooksDatabase.xml";
     private static final String ROOT = "BooksDatabase";
     private static final String ELEMENT = "Book";
@@ -52,6 +54,27 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         }
     }
 
+    private void updateTables() throws RemoteException {
+        for (RemoutInterface e : clients) {
+            try
+            {
+                e.databaseUpdateRequest(this.getAll());
+            } catch (Exception e1)
+            {
+                e1.printStackTrace();
+            }
+        }
+    }
+
+    public void setClient(RemoutInterface client) throws RemoteException {
+        clients.add(client);
+    }
+
+    @Override
+    public void deleteClient (RemoutInterface client) throws RemoteException {
+        clients.remove(client);
+    }
+
     @Override
     public ArrayList<Book> getAll () throws RemoteException {
         return this.books;
@@ -61,6 +84,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
     //Добавление элемента в конец списка
     public void paste (Book book) throws RemoteException{
         books.add(book);
+        updateTables();
         try
         {
             this.XMLWriter();
@@ -91,8 +115,8 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         int index=0;
         for (Book dop: this.books){
             if (article.equals(dop.getArticle())) {
-                System.out.print(index);
                 edit(index, book);
+                updateTables();
             }
             index++;
         }
@@ -179,6 +203,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
             } catch (TransformerException e) {
                 e.printStackTrace();
             }
+            updateTables();
             return true;
         }
         else
@@ -201,6 +226,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         } catch (TransformerException e) {
             e.printStackTrace();
         }
+        updateTables();
         return this.books;
     }
 

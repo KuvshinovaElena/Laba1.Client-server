@@ -9,7 +9,6 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
@@ -18,36 +17,55 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import laba1.Book;
 import laba1.DataServer;
+import laba1.RemoutInterface;
 
-import java.awt.*;
 import java.io.IOException;
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
-
 /**
- * Created by mvideo on 25.04.2015.
+ * Created by Елена on 25.04.2015.
  */
-public class GUI extends Application{
+
+public class GUI extends Application implements RemoutInterface {
     Stage stage;
-    static ArrayList<String> records;
     private DataServer clientService;
     private Registry clientRegistry;
     private ObservableList<Book> data = FXCollections.observableArrayList();
+    private RemoutInterface myObject = null;
 
-    public void init(final Stage primaryStage) throws IOException, NotBoundException {
+    private RemoutInterface getObject () throws RemoteException {
+
+        if (myObject == null) {
+            myObject = (RemoutInterface) UnicastRemoteObject.exportObject(this,0);
+        }
+
+        return myObject;
+    }
+
+    private void tableInitializer() throws RemoteException
+    {
+        if (data.isEmpty() == false) data.clear();
+
+        data.addAll(clientService.getAll());
+    }
+
+    public void init(final Stage primaryStage, final ObservableList<Book> data) throws IOException, NotBoundException {
+
         final Group root = new Group();
         primaryStage.setScene(new Scene(root));
         primaryStage.setTitle("BOOK DATABASE 2015");
+
         clientRegistry = LocateRegistry.getRegistry(1099);
         String objectName = "rmi://localhost/book";
         clientService = (DataServer)clientRegistry.lookup(objectName);
-
-        data.addAll(clientService.getAll());
-
+        clientService.setClient(getObject());
+        tableInitializer();
         TableColumn articleCol = new TableColumn();
         articleCol.setText("Article");
         articleCol.setCellValueFactory(new PropertyValueFactory("article"));
@@ -265,8 +283,6 @@ public class GUI extends Application{
             }
         });
 
-
-
             hBox.getChildren().add(add);
             hBox.setSpacing(5);
             hBox.getChildren().add(remove);
@@ -288,11 +304,18 @@ public class GUI extends Application{
             root.getChildren().add(vBox);
     }
 
+    public void databaseUpdateRequest (ArrayList<Book> newList) throws RemoteException {
+        data.clear();
+        data.addAll(clientService.getAll());
+
+    }
+
     public void start(Stage primaryStage) throws Exception {
-        init(primaryStage);
+        init(primaryStage,data);
         primaryStage.show();
     }
     public static void main(String[] args) {
             launch(args);
         }
+
 }
