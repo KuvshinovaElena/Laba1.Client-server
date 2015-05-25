@@ -72,7 +72,7 @@ public class EditScene extends MyScene {
                         server.IndexEdit(newarticle,newbook);
                         for (Book i: data){
                             if (i.getArticle()==article)
-                                data.set(index,newbook);
+                                data.set(index,book);
                             index++;
                         }
                     } catch (RemoteException e)

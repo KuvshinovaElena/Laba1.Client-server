@@ -35,25 +35,17 @@ import java.util.ArrayList;
 
 public class GUI extends Application implements RemoutInterface {
     Stage stage;
-    private DataServer clientService;
+    private static DataServer clientService;
     private Registry clientRegistry;
-    private ObservableList<Book> data = FXCollections.observableArrayList();
+    private static ObservableList<Book> data = FXCollections.observableArrayList();
     private RemoutInterface myObject = null;
-    SimpleBooleanProperty WasDataChanged = new SimpleBooleanProperty(false);
-    private RemoutInterface getObject () throws RemoteException {
 
+    private RemoutInterface getObject () throws RemoteException {
         if (myObject == null) {
             myObject = (RemoutInterface) UnicastRemoteObject.exportObject(this,0);
         }
 
         return myObject;
-    }
-
-    private void tableInitializer() throws RemoteException
-    {
-        if (data.isEmpty() == false) data.clear();
-
-        data.addAll(clientService.getAll());
     }
 
     public void init(final Stage primaryStage, final ObservableList<Book> data) throws IOException, NotBoundException {
@@ -66,7 +58,8 @@ public class GUI extends Application implements RemoutInterface {
         String objectName = "rmi://localhost/book";
         clientService = (DataServer)clientRegistry.lookup(objectName);
         clientService.setClient(getObject());
-        tableInitializer();
+        data.addAll(clientService.getAll());
+
         TableColumn articleCol = new TableColumn();
         articleCol.setText("Article");
         articleCol.setCellValueFactory(new PropertyValueFactory("article"));
@@ -305,11 +298,10 @@ public class GUI extends Application implements RemoutInterface {
             root.getChildren().add(vBox);
     }
 
+    @Override
     public void databaseUpdateRequest (ArrayList<Book> newList) throws RemoteException {
-        WasDataChanged.set(true);
-        if (!data.isEmpty())
-                data.clear();
-        data.addAll(clientService.getAll());
+        data.clear();
+        data.addAll(newList);
     }
 
     public void start(Stage primaryStage) throws Exception {

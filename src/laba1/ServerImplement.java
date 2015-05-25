@@ -56,7 +56,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
 
     private void updateTables() throws RemoteException {
         for(int i=0;i<clients.size();i++)
-            clients.get(i).databaseUpdateRequest(getAll());
+            clients.get(i).databaseUpdateRequest(books);
     }
 
     public void setClient(RemoutInterface client) throws RemoteException {

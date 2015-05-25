@@ -79,7 +79,6 @@ public class AddScene  extends MyScene{
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
-                    data.add(book);
                     close();
                 }
             }
