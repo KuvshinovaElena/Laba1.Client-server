@@ -1,6 +1,7 @@
 package laba3;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -38,7 +39,7 @@ public class GUI extends Application implements RemoutInterface {
     private Registry clientRegistry;
     private ObservableList<Book> data = FXCollections.observableArrayList();
     private RemoutInterface myObject = null;
-
+    SimpleBooleanProperty WasDataChanged = new SimpleBooleanProperty(false);
     private RemoutInterface getObject () throws RemoteException {
 
         if (myObject == null) {
@@ -305,9 +306,10 @@ public class GUI extends Application implements RemoutInterface {
     }
 
     public void databaseUpdateRequest (ArrayList<Book> newList) throws RemoteException {
-        data.clear();
+        WasDataChanged.set(true);
+        if (!data.isEmpty())
+                data.clear();
         data.addAll(clientService.getAll());
-
     }
 
     public void start(Stage primaryStage) throws Exception {
