@@ -36,7 +36,7 @@ import java.util.ArrayList;
 public class GUI extends Application implements RemoutInterface {
     Stage stage;
     private static DataServer clientService;
-    private Registry clientRegistry;
+    private static Registry clientRegistry;
     private static ObservableList<Book> data = FXCollections.observableArrayList();
     private RemoutInterface myObject = null;
 
