@@ -69,7 +69,7 @@ public class EditScene extends MyScene {
                     try
                     {
                         int index=0;
-                        server.IndexEdit(newarticle,newbook);
+                        server.IndexEdit(article,newbook);
                         for (Book i: data){
                             if (i.getArticle()==article)
                                 data.set(index,book);
