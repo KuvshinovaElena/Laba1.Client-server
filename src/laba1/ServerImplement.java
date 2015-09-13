@@ -41,7 +41,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
 
     public ServerImplement() throws IOException {
         super();
-        this.books=new ArrayList<Book>();
+        this.books = new ArrayList<Book>();
         try
         {
             this.XMLReader();
@@ -56,7 +56,9 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
 
     private void updateTables() throws RemoteException {
         for(int i=0;i<clients.size();i++)
+        {
             clients.get(i).databaseUpdateRequest(books);
+        }
     }
 
     public void setClient(RemoutInterface client) throws RemoteException {
@@ -89,6 +91,7 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
             e.printStackTrace();
         }
     }
+
     @Override
     public void edit(int index, Book book) throws RemoteException {
         books.set(index, book);

@@ -89,6 +89,7 @@ public class GUI extends Application implements RemoutInterface {
             root.getChildren().add(tableView);
             HBox hBox = new HBox();
 
+
             final Button add = new Button("ADD");
             add.setPrefWidth(248);
             add.setStyle("-fx-text-fill: white;-fx-base: rgb(40,155,220);");

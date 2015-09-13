@@ -8,20 +8,23 @@ import java.rmi.ServerException;
 import java.rmi.MarshalException;
 import java.rmi.UnmarshalException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Created by mvideo on 29.03.2015.
+ * Created by Елена on 29.03.2015.
  */
-public class ClientImplement {
+public class ClientImplement implements RemoutInterface{
 
     private DataServer server;
     private Scanner scanner;
+    private RemoutInterface myObject = null;
 
     public ClientImplement(DataServer server) throws IOException {
         this.server = server;
+        server.setClient(getObject());
         this.scanner = new Scanner(System.in);
         try
         {
@@ -258,5 +261,17 @@ public class ClientImplement {
                 break;
             default: break;
         }
+    }
+
+    public RemoutInterface getObject () throws RemoteException {
+        if (myObject == null) {
+            myObject = (RemoutInterface) UnicastRemoteObject.exportObject(this, 0);
+        }
+        return myObject;
+    }
+
+    @Override
+    public void databaseUpdateRequest (ArrayList<Book> newList) throws RemoteException {
+        System.out.printf("\nБыли произведены изменения в базе\n!");
     }
 }
