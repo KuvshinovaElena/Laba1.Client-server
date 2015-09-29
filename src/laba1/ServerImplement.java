@@ -1,163 +1,181 @@
 package laba1;
 
-import javafx.stage.Stage;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.rmi.ServerException;
-import java.lang.IndexOutOfBoundsException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Елена on 15.03.2015.
  */
-public class ServerImplement extends UnicastRemoteObject implements DataServer {
 
+public class ServerImplement extends Thread {
     ArrayList<Book> books;
-    ArrayList <RemoutInterface> clients = new ArrayList<RemoutInterface>();
-    private static final String FIlE_PATH = "src/BooksDatabase.xml";
-    private static final String ROOT = "BooksDatabase";
-    private static final String ELEMENT = "Book";
-    private static final String ARTICLE = "Article";
-    private static final String AUTOR = "Autor";
-    private static final String TITLE = "Title";
-    private static final String QUANTITY = "Quantity";
-    private static final String PRICE = "Price";
+    public Map<Integer,Socket> clients = new HashMap<Integer, Socket>();
+    DOM dom = new DOM();
+    private ServerSocket server;
+    ObjectInputStream ois;
+    ObjectOutputStream oos;
 
-    public ServerImplement() throws IOException {
-        super();
+    public ServerImplement(ServerSocket server) throws IOException {
         this.books = new ArrayList<Book>();
-        try
-        {
-            this.XMLReader();
-        } catch (ParserConfigurationException e)
-        {
+        this.server = server;
+        try {
+            dom.XMLReader(books);
+        } catch (ParserConfigurationException e) {
             e.printStackTrace();
-        } catch (SAXException e)
-        {
+        } catch (SAXException e) {
+            e.printStackTrace();
+        }
+        start();
+    }
+
+    @Override
+    public void run() {
+        try {
+            System.out.println("Waiting for clients request");
+
+            while(true) {
+                //ожидание соединения клиентов
+                Socket socket = server.accept();
+
+                //создание  объекта ObjectInputStream для чтения
+                ois = new ObjectInputStream(socket.getInputStream());
+                //создание  объекта ObjectOutputStream для записи
+                oos = new ObjectOutputStream(socket.getOutputStream());
+
+
+                try {
+                    String message;
+                    List<List<String>> listE = (List<List<String>>) ois.readObject();
+                    System.out.println("Message received: " + (message = IncomingEvent(listE)));
+
+                    if (message.equals("Connect new client made successfully:"))
+                    {
+                        System.out.println("\t" + socket.toString());
+                        clients.put(socket.getPort(),socket);
+                        continue;
+                    }
+
+                    if (message.equals("Client removed:")) {
+                        Integer port = (Integer) ois.readObject();
+                        System.out.println(clients.get(port).toString());
+                        oos = new ObjectOutputStream(clients.get(port).getOutputStream());
+                        oos.writeObject("Bye, Client!");
+                        clients.remove(port); //удаляем сокет из map
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (XMLStreamException e) {
+                    e.printStackTrace();
+                }
+                oos.close();
+                ois.close();
+                socket.close();
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void updateTables() throws RemoteException {
-        for(int i=0;i<clients.size();i++)
-        {
-            clients.get(i).databaseUpdateRequest(books);
+        for (int i = 0; i < clients.size(); i++) {
         }
     }
 
-    public void setClient(RemoutInterface client) throws RemoteException {
-        clients.add(client);
-    }
-
-    @Override
-    public void deleteClient (RemoutInterface client) throws RemoteException {
+    public void deleteClient(RemoutInterface client) throws RemoteException {
         clients.remove(client);
     }
 
-    @Override
-    public ArrayList<Book> getAll () throws RemoteException {
+    public ArrayList<Book> getAll() throws RemoteException {
         return this.books;
     }
 
-    @Override
     //Добавление элемента в конец списка
-    public void paste (Book book) throws RemoteException{
+    public void paste(Book book) throws RemoteException {
         books.add(book);
-        updateTables();
-        try
-        {
-            this.XMLWriter();
-        } catch (ParserConfigurationException e)
-        {
+       // updateTables();
+        try {
+            dom.XMLWriter(books);
+        } catch (ParserConfigurationException e) {
             e.printStackTrace();
-        } catch (TransformerException e)
-        {
+        } catch (TransformerException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
     public void edit(int index, Book book) throws RemoteException {
         books.set(index, book);
-        try
-        {
-            this.XMLWriter();
-        } catch (ParserConfigurationException e)
-        {
+        try {
+            dom.XMLWriter(books);
+        } catch (ParserConfigurationException e) {
             e.printStackTrace();
-        } catch (TransformerException e)
-        {
+        } catch (TransformerException e) {
             e.printStackTrace();
         }
     }
-    @Override
-    public int IndexEdit(String article,Book book) throws RemoteException {
-        int index=0;
-        for (Book dop: this.books){
+
+    public int IndexEdit(String article, Book book) throws RemoteException {
+        int index = 0;
+        for (Book dop : this.books) {
             if (article.equals(dop.getArticle())) {
                 edit(index, book);
-                updateTables();
+
             }
             index++;
         }
         return index;
     }
-    //Поиск элемента по автору
-    @Override
+
     public ArrayList<Book> findByAutor(String autor) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();
-        for (Book book: books) {
-            if (autor.equals(book.getAutor())){
+        for (Book book : books) {
+            if (autor.equals(book.getAutor())) {
                 newbooks.add(book);
             }
         }
         return newbooks;
     }
-    //Поиск элемента по названию
-    @Override
+
     public ArrayList<Book> findByTitle(String title) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();
-        for (Book book: books) {
+        for (Book book : books) {
             if (title.equals(book.getTitle())) {
                 newbooks.add(book);
             }
         }
         return newbooks;
     }
-    //Поиск элемента по артикулу
-    @Override
+
     public ArrayList<Book> findByArticle(String article) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();
-        for (Book book: books) {
+        for (Book book : books) {
             if (article.equals(book.getArticle())) {
                 newbooks.add(book);
             }
         }
         return newbooks;
     }
-    @Override
-    public ArrayList<Book> findByArticle (String article, String newarticle)throws RemoteException{
+
+    public ArrayList<Book> findByArticle(String article, String newarticle) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();
-        if (newarticle.equals(article)){
+        if (newarticle.equals(article)) {
             return newbooks;
         }
-        for (Book book: books) {
+        for (Book book : books) {
             if (newarticle.equals(book.getArticle())) {
                 newbooks.add(book);
             }
@@ -165,22 +183,19 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         return newbooks;
     }
 
-    //Поиск элемента по количеству
-    @Override
     public ArrayList<Book> findByQuantity(int quantity) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();
-        for (Book book: books) {
+        for (Book book : books) {
             if (book.getQuantity() == quantity) {
                 newbooks.add(book);
             }
         }
         return newbooks;
     }
-    //Поиск элемента по цене
-    @Override
+
     public ArrayList<Book> findByPrice(int price) throws RemoteException {
         ArrayList<Book> newbooks = new ArrayList<Book>();
-        for (Book book: books) {
+        for (Book book : books) {
             if (book.getPrice() == price) {
                 newbooks.add(book);
             }
@@ -188,129 +203,97 @@ public class ServerImplement extends UnicastRemoteObject implements DataServer {
         return newbooks;
     }
 
-    @Override
     public boolean delAll() throws RemoteException {
         if (!books.isEmpty()) {
             this.books.clear();
             try {
-                XMLWriter();
+                dom.XMLWriter(books);
             } catch (ParserConfigurationException e) {
                 e.printStackTrace();
             } catch (TransformerException e) {
                 e.printStackTrace();
             }
-            updateTables();
+           // updateTables();
             return true;
-        }
-        else
+        } else
             return false;
     }
 
-    @Override
-    public ArrayList<Book> delTheArticle(String article) throws RemoteException{
-        ArrayList<Book> newbooks= new ArrayList<Book>();
-        for (Book book: books) {
+    public ArrayList<Book> delTheArticle(String article) throws RemoteException {
+        ArrayList<Book> newbooks = new ArrayList<Book>();
+        for (Book book : books) {
             if (!article.equals(book.getArticle())) {
                 newbooks.add(book);
             }
         }
-        this.books=newbooks;
+
+        this.books = newbooks;
         try {
-            this.XMLWriter();
+            dom.XMLWriter(books);
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (TransformerException e) {
             e.printStackTrace();
         }
-        updateTables();
+
+       // updateTables();
         return this.books;
     }
+    public String IncomingEvent(List<List<String>> messages) throws IOException, XMLStreamException {
+        if (messages != null) {
+           ArrayList<Book> books = EventBase.decodingMessages(messages);
+            switch (Integer.parseInt(messages.get(0).get(0))) {
 
-    public void XMLWriter () throws ParserConfigurationException, TransformerException {
-        if (books.isEmpty()) return;
-        File fxml=new File(FIlE_PATH);
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = dbf.newDocumentBuilder();
-        Document document = builder.newDocument();
+                case EventBase.CLIENT_CONNECTION:
+                {
+                    //конвертируем сообщение от клиента в строку
+                    String message = null;   //Читаем сообщение Hi server! I'm client...
+                    try {
+                        message = (String) ois.readObject();
 
-        Element rootElement = document.createElement(ROOT);
-        document.appendChild(rootElement);
-        int i = 0;
-        for (Book book: this.books){
-            Element elem = document.createElement(ELEMENT);
-            rootElement.appendChild(elem);
+                        System.out.println("Message received: " + message);
 
-            Element article = document.createElement(ARTICLE);
-            article.appendChild(document.createTextNode(book.getArticle()));
-            elem.appendChild(article);
+                        //пишем сообщение в сокет через ObjectOutputStream
+                        oos.writeObject("Hi Client!");
+                        List<List<String>> reply = EventBase.codingMessages(EventBase.ADD, this.books,null);
+                        oos.writeObject(reply);      //пишем список всех TV
+                        oos.writeObject("TVs added");
+                        return "Connect new client made successfully:";
 
-            Element autor = document.createElement(AUTOR);
-            autor.appendChild(document.createTextNode(book.getAutor()));
-            elem.appendChild(autor);
-
-            Element title = document.createElement(TITLE);
-            title.appendChild(document.createTextNode(book.getTitle()));
-            elem.appendChild(title);
-
-            Element quantity = document.createElement(QUANTITY);
-            quantity.appendChild(document.createTextNode(Integer.toString(book.getQuantity())));
-            elem.appendChild(quantity);
-
-            Element price = document.createElement(PRICE);
-            price.appendChild(document.createTextNode(Integer.toString(book.getPrice())));
-            elem.appendChild(price);
-
-        }
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        DOMSource source = new DOMSource(document);
-        StreamResult result = new StreamResult(fxml);
-        transformer.transform(source,result);
-    }
-
-    public void XMLReader () throws ParserConfigurationException, IOException, SAXException {
-
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setValidating(false);
-        File fxml=new File(FIlE_PATH);
-        if (fxml.length() == 0) return ;
-
-        DocumentBuilder builder = dbf.newDocumentBuilder();
-        Document document = builder.parse(fxml);
-        NodeList readerList = document.getDocumentElement().getChildNodes();
-        for (int i = 0; i<readerList.getLength();i++){
-            Node node = readerList.item(i);
-            if (node.getNodeName() == ELEMENT){
-               Book book = new Book();
-                NodeList childNodes = node.getChildNodes();
-                for (int j = 0; j < childNodes.getLength(); j++) {
-                    Node cNode = childNodes.item(j);
-                    String childNoteContent;
-                    switch (cNode.getNodeName()) {
-                        case ARTICLE:
-                            childNoteContent = cNode.getLastChild().getTextContent().trim();
-                            book.setArticle(childNoteContent);
-                        case AUTOR:
-                            childNoteContent = cNode.getLastChild().getTextContent().trim();
-                            book.setAutor(childNoteContent);
-                            break;
-                        case TITLE:
-                            childNoteContent = cNode.getLastChild().getTextContent().trim();
-                            book.setTitle(childNoteContent);
-                            break;
-                        case QUANTITY:
-                            childNoteContent = cNode.getLastChild().getTextContent().trim();
-                            book.setQuantity(Integer.parseInt(childNoteContent));
-                        case PRICE:
-                            childNoteContent = cNode.getLastChild().getTextContent().trim();
-                            book.setPrice(Integer.parseInt(childNoteContent));
-                            break;
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
                     }
                 }
-                books.add(book);
+
+                case EventBase.ADD:
+                {
+                    paste(books.get(0));
+                    updateTables();
+                }
+
+                case EventBase.DELETE:
+                {
+                    delTheArticle(messages.get(1).get(1));
+                    updateTables();
+                }
+                case EventBase.EDIT:
+                {
+                    IndexEdit(messages.get(1).get(5), books.get(0));
+                    updateTables();
+                }
+
+                case EventBase.GET_LIST:
+                {
+                    findByArticle(messages.get(1).get(0),messages.get(2).get(0));
+                }
+
+                case EventBase.CLIENT_SHUTDOWN:
+                {
+                    return "Client removed:";
+                }
             }
         }
-
+        return "Unknown request!";
     }
 }
 

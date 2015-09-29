@@ -16,11 +16,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import laba1.Book;
-import laba1.DataServer;
-import laba1.RemoutInterface;
+import laba1.*;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -28,6 +29,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Елена on 25.04.2015.
@@ -39,6 +41,12 @@ public class GUI extends Application implements RemoutInterface {
     private static Registry clientRegistry;
     private static ObservableList<Book> data = FXCollections.observableArrayList();
     private RemoutInterface myObject = null;
+    TableView tableView = new TableView();
+
+    static Socket socketInMap = null;
+    ObjectOutputStream oos = null;
+    ObjectInputStream ois = null;
+    String message = null;
 
     private RemoutInterface getObject () throws RemoteException {
         if (myObject == null) {
@@ -48,17 +56,29 @@ public class GUI extends Application implements RemoutInterface {
         return myObject;
     }
 
-    public void init(final Stage primaryStage, final ObservableList<Book> data) throws IOException, NotBoundException {
+    public void client() throws IOException, ClassNotFoundException {
+        socketInMap = new Socket("localhost", 1098);
+        oos = new ObjectOutputStream(socketInMap.getOutputStream());
+        ois = new ObjectInputStream(socketInMap.getInputStream());
+        System.out.println("Sending request to Socket Server");
 
+        List<List<String>> eventList = EventBase.codingMessages(EventBase.CLIENT_CONNECTION, (List<Book>) null, null);
+        oos.writeObject(eventList);
+        oos.writeObject("Hi server! I'm client - " + socketInMap.toString());
+        message = (String) ois.readObject();    //Читаем сообщение Hi Client!
+        System.out.println("Message from server: " + message);
+        tableView = new TableView<>();
+        data = FXCollections.observableList(EventBase.decodingMessages((List<List<String>>) ois.readObject()));
+        message = (String) ois.readObject();   //Читаем сообщение TVs added`
+        System.out.println("Message from server: " + message);
+        new InputThread(socketInMap);  //создаем поток для чтения сообщений
+    }
+
+    public void init(final Stage primaryStage, final ObservableList<Book> data) throws IOException, NotBoundException, ClassNotFoundException {
+        client();
         final Group root = new Group();
         primaryStage.setScene(new Scene(root));
         primaryStage.setTitle("BOOK DATABASE 2015");
-
-        clientRegistry = LocateRegistry.getRegistry(1099);
-        String objectName = "rmi://localhost/book";
-        clientService = (DataServer)clientRegistry.lookup(objectName);
-        clientService.setClient(getObject());
-        data.addAll(clientService.getAll());
 
         TableColumn articleCol = new TableColumn();
         articleCol.setText("Article");
@@ -82,7 +102,7 @@ public class GUI extends Application implements RemoutInterface {
             priceCol.setText("Price");
             priceCol.setCellValueFactory(new PropertyValueFactory("Price"));
 
-            final TableView tableView = new TableView();
+
             tableView.setItems(data);
             tableView.getColumns().addAll(articleCol, autorCol, titleCol, quantityCol, priceCol);
 
@@ -99,7 +119,7 @@ public class GUI extends Application implements RemoutInterface {
                     if(stage != null) {
                         stage.close();
                     }
-                    stage = new AddScene(data,clientService);
+                    stage = new AddScene(data,oos,ois);
                     stage.setTitle("ADD IN DATABASE");
                 }
             });
@@ -111,9 +131,10 @@ public class GUI extends Application implements RemoutInterface {
                 @Override
                 public void handle(ActionEvent event) {
                     Book book = (Book)tableView.getSelectionModel().getSelectedItem();
+                    List<List<String>> deleteList = EventBase.codingMessages(EventBase.DELETE, book.getArticle());
                     try {
-                        clientService.delTheArticle(book.getArticle());
-                    } catch (RemoteException e) {
+                        GUI.connect(EventBase.DELETE,deleteList);
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                     data.remove(book);
@@ -129,7 +150,7 @@ public class GUI extends Application implements RemoutInterface {
                     Group root = new Group();
                     try {
                         Book book = (Book)tableView.getSelectionModel().getSelectedItem();
-                        stage = new EditScene(root, data, clientService, book);
+                        stage = new EditScene(root, data, book,oos,ois);
                         stage.setTitle("EDITING DATABASE");
                         tableView.getSelectionModel().clearSelection();
                     }catch (NullPointerException e){
@@ -299,6 +320,20 @@ public class GUI extends Application implements RemoutInterface {
             root.getChildren().add(vBox);
     }
 
+    public static void connect(int op, List <List<String>> eventList) throws IOException {
+        Socket socket = new Socket("localhost", 1098);
+        ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+        ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+
+                oos.writeObject(eventList);
+        if (op == EventBase.CLIENT_SHUTDOWN)
+            oos.writeObject(socketInMap.getLocalPort());
+        else oos.writeObject(eventList);
+        oos.close();
+        ois.close();
+        socket.close();
+    }
+
     @Override
     public void databaseUpdateRequest (ArrayList<Book> newList) throws RemoteException {
         data.clear();
@@ -309,6 +344,16 @@ public class GUI extends Application implements RemoutInterface {
         init(primaryStage,data);
         primaryStage.show();
     }
+    @Override
+    public void stop() throws Exception {
+        connect(EventBase.CLIENT_SHUTDOWN, null);
+        InputThread.yield();
+        ois.close();
+        oos.close();
+        socketInMap.close();
+        super.stop();
+    }
+
     public static void main(String[] args) {
             launch(args);
         }

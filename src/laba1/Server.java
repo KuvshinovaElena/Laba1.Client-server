@@ -24,21 +24,8 @@ public class Server {
 
     public static void main (String [] args) throws IOException, ClassNotFoundException
     {
-        ServerImplement server = new ServerImplement();      //Создание удалённого объекта
-      /*  ServerSocket server = new ServerSocket(1098);
-        System.out.println("Running...");
-        Socket socket = server.accept();
-        ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-        String message = (String) ois.readObject();     //Письмо от подключённого клиента
-        System.out.println("Running...");
-        ois.close();
-        socket.close();
-        server.close();*/
-        Registry registry = LocateRegistry.createRegistry(1099); // регистрация удаленного объекта в реестре rmiregistry
-        String nameServer = "rmi://localhost/book";      //Название удалённого объекта
-        registry.rebind(nameServer, server);
-       //String message = (String) ois.readObject();
-        System.out.println("Running...");
+        ServerSocket server = new ServerSocket(1098);
+        new ServerImplement(server);
     }
 
 }

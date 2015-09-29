@@ -1,31 +1,40 @@
 package laba1;
 
+import javafx.collections.FXCollections;
+import javafx.scene.control.TableView;
+
+import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 /**
  * Created by Елена on 14.03.2015.
  */
-public class Client {
+public class Client extends Thread{
+    static ObjectOutputStream oos = null;
+    static ObjectInputStream ois = null;
+    static Socket socketInMap = null;
+
     public static void main (String [] args) throws Exception {
-        InetAddress host = InetAddress.getLocalHost();
-        Socket socket = null;
-        ObjectInputStream oos = null;
-        ObjectInputStream ois = null;
-        socket = new Socket(host.getHostName(),1098);
-        oos = new ObjectInputStream(socket.getInputStream());
-        ois =new ObjectInputStream(socket.getInputStream());
-        oos.close();
+        socketInMap = new Socket("localhost", 1098);
+        oos = new ObjectOutputStream(socketInMap.getOutputStream());
+        ois = new ObjectInputStream(socketInMap.getInputStream());
+        System.out.println("Sending request to Socket Server");
+        //ois.readObject();
+        oos.writeObject("Hi server! I'm client - " + socketInMap.toString());
+        List<List<String>> eventList = EventBase.codingMessages(EventBase.CLIENT_CONNECTION, null);
+        oos.writeObject(eventList);
+        String message = (String) ois.readObject();    //Читаем сообщение Hi Client!
+        System.out.println("Message from server: " + message);
         ois.close();
-        socket.close();
-      // Registry registry= LocateRegistry.getRegistry(1099);
-       String objectName = "rmi://localhost/book";
-      // DataServer server= (DataServer)registry.lookup(objectName);
-       //ClientImplement clients = new ClientImplement(server);
+        oos.close();
+        socketInMap.close();
    }
 }

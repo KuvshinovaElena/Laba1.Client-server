@@ -2,12 +2,18 @@ package laba3;
 
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import laba1.Book;
 import laba1.DataServer;
+import laba1.EventBase;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
- * Created by mvideo on 16.05.2015.
+ * Created by Елена on 16.05.2015.
  */
 public class MyScene extends Stage {
     public static int checkInputInt(TextField text){
@@ -33,7 +39,7 @@ public class MyScene extends Stage {
         }
         return num;
     }
-    public static String checkArticle (String article,TextField newarticle, DataServer server) throws RemoteException {
+    public static String checkArticle (String article,TextField newarticle, ObjectOutputStream oos, ObjectInputStream ois) throws RemoteException {
         String str1,str2;
         if (article!=null) {
             str1 = article;
@@ -41,7 +47,14 @@ public class MyScene extends Stage {
         else
             str1=null;
         str2 = newarticle.getText();
-        if (server.findByArticle(str1,str2).isEmpty())
+        List<List<String>> findList = EventBase.codingMessages(EventBase.GET_LIST,str1,str2);
+        try {
+            GUI.connect(EventBase.GET_LIST, findList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        List<Book> find = EventBase.decodingMessages(findList);
+        if (find.isEmpty())
             return str2;
         else {
             newarticle.clear();

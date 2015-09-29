@@ -11,14 +11,20 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import laba1.Book;
 import laba1.DataServer;
+import laba1.EventBase;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Елена on 21.05.2015.
  */
 public class EditScene extends MyScene {
-    public EditScene(Group root, final ObservableList<Book> data, final DataServer server, final Book book){
+    public EditScene(Group root, final ObservableList<Book> data, final Book book, final ObjectOutputStream oos, final ObjectInputStream ois){
         setScene(new Scene(root));
         final String article = book.getArticle();
         Label labell = new Label("Article");
@@ -50,7 +56,7 @@ public class EditScene extends MyScene {
                 String newarticle = checkEnter(text1);
                 if (newarticle!=null) {
                     try {
-                        newarticle = checkArticle(article,text1, server);
+                        newarticle = checkArticle(article,text1,oos,ois);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -66,20 +72,20 @@ public class EditScene extends MyScene {
                     newbook.setTitle(title);
                     newbook.setQuantity(quantity);
                     newbook.setPrice(price);
-                    try
-                    {
-                        int index=0;
-                        server.IndexEdit(article,newbook);
-                        for (Book i: data){
-                            if (i.getArticle()==article)
-                                data.set(index,book);
-                            index++;
-                        }
-                    } catch (RemoteException e)
-                    {
+                    ArrayList<Book> books = new ArrayList<Book>();
+                    books.add(newbook);
+                    int index=0;
+                    List<List<String>> addList = EventBase.codingMessages(EventBase.EDIT, books,article);
+                    try {
+                        GUI.connect(EventBase.EDIT,addList);
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
-
+                    for (Book i: data){
+                        if (i.getArticle()==article)
+                            data.set(index,book);
+                        index++;
+                    }
                     close();
                 }
             }

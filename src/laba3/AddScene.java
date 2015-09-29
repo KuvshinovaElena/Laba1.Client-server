@@ -13,18 +13,22 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import laba1.Book;
 import laba1.DataServer;
+import laba1.EventBase;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Елена on 09.05.2015.
  */
 public class AddScene  extends MyScene{
 
-    public AddScene(final ObservableList<Book> data, final DataServer server){
+    public AddScene(final ObservableList<Book> data, final ObjectOutputStream oos, final ObjectInputStream ois){
         final Group root = new Group();
         setScene(new Scene(root));
 
@@ -58,7 +62,7 @@ public class AddScene  extends MyScene{
                 String article = checkEnter(text1);
                 if (article!=null) {
                     try {
-                        article = checkArticle(null,text1, server);
+                        article = checkArticle(null,text1,oos,ois);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -74,11 +78,15 @@ public class AddScene  extends MyScene{
                     book.setTitle(title);
                     book.setQuantity(quantity);
                     book.setPrice(price);
+                    ArrayList<Book> books = new ArrayList<Book>();
+                    books.add(book);
+                    List<List<String>> addList = EventBase.codingMessages(EventBase.ADD,books,null);
                     try {
-                        server.paste(book);
-                    } catch (RemoteException e) {
+                        GUI.connect(EventBase.ADD,addList);
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                     close();
                 }
             }
