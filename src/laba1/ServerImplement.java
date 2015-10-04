@@ -20,15 +20,12 @@ import java.util.Map;
  */
 
 public class ServerImplement extends Thread {
-    ArrayList<Book> books;
+    ArrayList<Book> books = new ArrayList<Book>();
     public Map<Integer,Socket> clients = new HashMap<Integer, Socket>();
     DOM dom = new DOM();
     private ServerSocket server;
-    ObjectInputStream ois;
-    ObjectOutputStream oos;
 
     public ServerImplement(ServerSocket server) throws IOException {
-        this.books = new ArrayList<Book>();
         this.server = server;
         try {
             dom.XMLReader(books);
@@ -38,6 +35,10 @@ public class ServerImplement extends Thread {
             e.printStackTrace();
         }
         start();
+    }
+
+    public Map<Integer, Socket> getClients() {
+        return clients;
     }
 
     @Override
@@ -50,15 +51,15 @@ public class ServerImplement extends Thread {
                 Socket socket = server.accept();
 
                 //создание  объекта ObjectInputStream для чтения
-                ois = new ObjectInputStream(socket.getInputStream());
+                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 //создание  объекта ObjectOutputStream для записи
-                oos = new ObjectOutputStream(socket.getOutputStream());
+                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 
 
                 try {
                     String message;
                     List<List<String>> listE = (List<List<String>>) ois.readObject();
-                    System.out.println("Message received: " + (message = IncomingEvent(listE)));
+                    System.out.println("Message received: " + (message = IncomingEvent(listE, oos,ois)));
 
                     if (message.equals("Connect new client made successfully:"))
                     {
@@ -92,7 +93,16 @@ public class ServerImplement extends Thread {
     }
 
     private void updateTables() throws RemoteException {
-        for (int i = 0; i < clients.size(); i++) {
+        for(Socket socket: getClients().values()){
+            try {
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                out.writeObject("Update");
+                List<List<String>> events = EventBase.codingMessages(EventBase.ADD, books,null);
+                out.writeObject(events);
+                out.writeObject("Table updated");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -239,7 +249,7 @@ public class ServerImplement extends Thread {
        // updateTables();
         return this.books;
     }
-    public String IncomingEvent(List<List<String>> messages) throws IOException, XMLStreamException {
+    public String IncomingEvent(List<List<String>> messages, ObjectOutputStream oos, ObjectInputStream ois) throws IOException, XMLStreamException {
         if (messages != null) {
            ArrayList<Book> books = EventBase.decodingMessages(messages);
             switch (Integer.parseInt(messages.get(0).get(0))) {
@@ -257,7 +267,7 @@ public class ServerImplement extends Thread {
                         oos.writeObject("Hi Client!");
                         List<List<String>> reply = EventBase.codingMessages(EventBase.ADD, this.books,null);
                         oos.writeObject(reply);      //пишем список всех TV
-                        oos.writeObject("TVs added");
+                        oos.writeObject("Books added");
                         return "Connect new client made successfully:";
 
                     } catch (ClassNotFoundException e) {
@@ -268,19 +278,22 @@ public class ServerImplement extends Thread {
                 case EventBase.ADD:
                 {
                     paste(books.get(0));
+                    oos.writeObject("Book added");
                     updateTables();
                     return "Added successfully";
                 }
 
                 case EventBase.DELETE:
                 {
-                    delTheArticle(messages.get(1).get(1));
+                    delTheArticle(messages.get(1).get(0));
+                    oos.writeObject("Book deleted");
                     updateTables();
                     return "Deleted successfully";
                 }
                 case EventBase.EDIT:
                 {
                     IndexEdit(messages.get(1).get(5), books.get(0));
+                    oos.writeObject("Book edited");
                     updateTables();
                     return "Edited successfully ";
                 }
