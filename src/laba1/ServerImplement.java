@@ -269,22 +269,26 @@ public class ServerImplement extends Thread {
                 {
                     paste(books.get(0));
                     updateTables();
+                    return "Added successfully";
                 }
 
                 case EventBase.DELETE:
                 {
                     delTheArticle(messages.get(1).get(1));
                     updateTables();
+                    return "Deleted successfully";
                 }
                 case EventBase.EDIT:
                 {
                     IndexEdit(messages.get(1).get(5), books.get(0));
                     updateTables();
+                    return "Edited successfully ";
                 }
 
                 case EventBase.GET_LIST:
                 {
-                    findByArticle(messages.get(1).get(0),messages.get(2).get(0));
+                    //findByArticle(messages.get(1).get(0),messages.get(2).get(0));
+                    return "Got successfully ";
                 }
 
                 case EventBase.CLIENT_SHUTDOWN:

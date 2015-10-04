@@ -60,13 +60,13 @@ public class AddScene  extends MyScene{
             @Override
             public void handle(ActionEvent actionEvent) {
                 String article = checkEnter(text1);
-                if (article!=null) {
+               /* if (article!=null) {
                     try {
                         article = checkArticle(null,text1,oos,ois);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
-                }
+                }*/
                 String autor = checkEnter(text2);
                 String title  = checkEnter(text3);
                 int quantity = checkInputInt(text4);
