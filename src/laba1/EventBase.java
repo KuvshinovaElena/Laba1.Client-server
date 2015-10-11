@@ -15,34 +15,28 @@ public class EventBase {
     public static final int GET_LIST = 5;
     public static final int CLIENT_SHUTDOWN = 0;
 
-    public static List<List<String>> codingMessages (int event, List<Book> books, String article) {
-
-        List<List<String>> message = new ArrayList<>();
-        ArrayList<String> dop = new ArrayList<>();
-        dop.add(0, Integer.toString(event));
-        message.add(0, dop);
+    public static List<String> codingMessages (int event, List<Book> books, String article) {
+        List<String> message = new ArrayList<>();
+        message.add(0, Integer.toString(event));
         if (books == null) {
             return message;
         }
-
-        for(int i = 1; i < books.size(); i++) {
-            dop.add(0, books.get(i).getArticle());
-            dop.add(1, books.get(i).getAutor());
-            dop.add(2, books.get(i).getTitle());
-            dop.add(3, Integer.toString(books.get(i).getQuantity()));
-            dop.add(4, Integer.toString(books.get(i).getPrice()));
-            if (article != null){
-                dop.add(5, article);
+        int k = 1;
+        for(int i = 0; i < books.size(); i++) {
+            message.add(k, books.get(i).getArticle());
+            message.add(++k, books.get(i).getAutor());
+            message.add(++k, books.get(i).getTitle());
+            message.add(++k, Integer.toString(books.get(i).getQuantity()));
+            message.add(++k, Integer.toString(books.get(i).getPrice()));
+            if (article != null){       //Для изменения записи
+                message.add(++k, article);
             }
-            message.add(i,dop);
-        }
-        if (article != null){
-
         }
         return message;
     }
+
     //Для удаления и поиска не требуется полная запись о книге, а только лишь артикул
-    public static List<List<String>> codingMessages (int event, String ... str) {
+   /* public static List<List<String>> codingMessages (int event, String ... str) {
         List<List<String>> message = new ArrayList<>();
         ArrayList<String> dop = new ArrayList<>();
         dop.add(0, Integer.toString(event));
@@ -52,19 +46,19 @@ public class EventBase {
         }
         message.add(0, dop);
         return message;
-    }
+    }*/
 
-    public static ArrayList<Book> decodingMessages (List<List<String>> message){
+    public static ArrayList<Book> decodingMessages (List<String> message){
         ArrayList<Book> books = new ArrayList<Book>();
         if (message.size() > 1) {
-            for(int i = 0; i < message.size()-1;i++) {
-                books.get(i).setArticle(message.get(i+1).get(0));
-                books.get(i).setAutor(message.get(i+1).get(1));
-                books.get(i).setTitle(message.get(i+1).get(2));
-                books.get(i).setQuantity(Integer.parseInt(message.get(i+1).get(3)));
-                books.get(i).setPrice(Integer.parseInt(message.get(i+1).get(4)));
+            for (int i = 0; i < message.size() - 1; i++) {
+                    books.get(i).setArticle(message.get(i + 1));
+                    books.get(i).setAutor(message.get(i + 1));
+                    books.get(i).setTitle(message.get(i + 1));
+                    books.get(i).setQuantity(Integer.parseInt(message.get(i + 1)));
+                    books.get(i).setPrice(Integer.parseInt(message.get(i + 1)));
+                }
             }
-        }
         return books;
     }
 }

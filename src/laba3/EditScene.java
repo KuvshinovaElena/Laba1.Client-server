@@ -75,7 +75,7 @@ public class EditScene extends MyScene {
                     ArrayList<Book> books = new ArrayList<Book>();
                     books.add(newbook);
                     int index=0;
-                    List<List<String>> addList = EventBase.codingMessages(EventBase.EDIT, books,article);
+                    List<String> addList = EventBase.codingMessages(EventBase.EDIT, books,article);
                     try {
                         GUI.connect(EventBase.EDIT,addList);
                     } catch (IOException e) {

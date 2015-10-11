@@ -29,7 +29,7 @@ public class Client extends Thread{
         System.out.println("Sending request to Socket Server");
         //ois.readObject();
         oos.writeObject("Hi server! I'm client - " + socketInMap.toString());
-        List<List<String>> eventList = EventBase.codingMessages(EventBase.CLIENT_CONNECTION, null);
+        List<String> eventList = EventBase.codingMessages(EventBase.CLIENT_CONNECTION, null, null);
         oos.writeObject(eventList);
         String message = (String) ois.readObject();    //Читаем сообщение Hi Client!
         System.out.println("Message from server: " + message);

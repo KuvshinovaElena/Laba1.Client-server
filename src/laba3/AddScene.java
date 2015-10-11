@@ -8,18 +8,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import laba1.Book;
-import laba1.DataServer;
 import laba1.EventBase;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,8 +75,8 @@ public class AddScene  extends MyScene{
                     book.setPrice(price);
                     ArrayList<Book> books = new ArrayList<Book>();
                     books.add(book);
-                    List<List<String>> addList = EventBase.codingMessages(EventBase.ADD,books,null);
-                    try {
+                    List<String> addList = EventBase.codingMessages(EventBase.ADD,books,null);
+                   try {
                         GUI.connect(EventBase.ADD,addList);
                     } catch (IOException e) {
                         e.printStackTrace();

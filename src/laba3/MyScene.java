@@ -3,7 +3,6 @@ package laba3;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import laba1.Book;
-import laba1.DataServer;
 import laba1.EventBase;
 
 import java.io.IOException;
@@ -47,7 +46,7 @@ public class MyScene extends Stage {
         else
             str1=null;
         str2 = newarticle.getText();
-        List<List<String>> findList = EventBase.codingMessages(EventBase.GET_LIST,str1,str2);
+        List<String> findList = EventBase.codingMessages(EventBase.GET_LIST,null,null);
         try {
             GUI.connect(EventBase.GET_LIST, findList);
         } catch (IOException e) {

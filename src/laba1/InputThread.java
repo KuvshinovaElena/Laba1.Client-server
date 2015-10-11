@@ -1,35 +1,49 @@
 package laba1;
 
+import javafx.collections.FXCollections;
+import laba3.GUI;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.List;
 
 /**
- * Created by mvideo on 22.09.2015.
+ * Created by Елена on 22.09.2015.
  */
   public class InputThread extends Thread {
+    Socket socket;
+    GUI gui;
 
-        Socket socket;
-
-        public InputThread(Socket socket) {
-            this.socket = socket;
+    public InputThread(Socket socket, GUI gui) {
+        this.socket = socket;
+            this.gui = gui;
             start();
         }
 
     @Override
     public void run() {
-        String input = null;
         try {
             while (true) {
-                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                input = (String) in.readObject();
-                System.out.println("IN: " + input);
+                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                String message = (String) ois.readObject();
+                System.out.println("Message from server: " + message);
+                if (message.equals("Update")){
+                    List<String> ListE = (List<String>) ois.readObject();
+                    List<Book> books = EventBase.decodingMessages(ListE);
+                    gui.databaseUpdateRequest(FXCollections.observableList(books));
+
+                    message = (String) ois.readObject();
+                    System.out.println("Message from server: " + message);
+                }
+                if (message.equals("Bye, Client!")){
+                    return;
+                }
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+        } catch (ClassNotFoundException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
         }
-        System.out.println("ended");
     }
 }
