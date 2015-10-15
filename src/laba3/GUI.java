@@ -42,6 +42,7 @@ public class GUI extends Application {
     static Socket socketInMap = null;
     ObjectOutputStream oos = null;
     ObjectInputStream ois = null;
+    InputThread input;
     GUI gui;
 
     public GUI() throws IOException, ClassNotFoundException {
@@ -61,7 +62,7 @@ public class GUI extends Application {
 
         //Читаем собщение со списком данных 4+
         data = FXCollections.observableList(EventBase.decodingMessages((List<String>) ois.readObject()));
-        new InputThread(socketInMap,this);  //создаем поток для чтения сообщений
+        input = new InputThread(socketInMap,this);  //создаем поток для чтения сообщений
     }
 
     public void init(final Stage primaryStage, final ObservableList<Book> data) throws IOException, NotBoundException, ClassNotFoundException {
@@ -108,7 +109,7 @@ public class GUI extends Application {
                     if(stage != null) {
                         stage.close();
                     }
-                    stage = new AddScene(data,oos,ois);
+                    stage = new AddScene(data,oos,input);
                     stage.setTitle("ADD IN DATABASE");
                 }
             });
@@ -142,7 +143,7 @@ public class GUI extends Application {
                     Group root = new Group();
                     try {
                         Book book = (Book)tableView.getSelectionModel().getSelectedItem();
-                        stage = new EditScene(root, data, book,oos,ois);
+                        stage = new EditScene(root, data, book,oos,input);
                         stage.setTitle("EDITING DATABASE");
                         tableView.getSelectionModel().clearSelection();
                     }catch (NullPointerException e){
@@ -315,13 +316,10 @@ public class GUI extends Application {
     public static void connect(int num, List <String> eventList) throws IOException {
         Socket socket = new Socket("localhost", 1098);
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-       // ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
         oos.writeObject(eventList);
         if (num == EventBase.CLIENT_SHUTDOWN)
             oos.writeObject(socketInMap.getLocalPort());
-        //else oos.writeObject(eventList);
         oos.close();
-       // ois.close();
         socket.close();
     }
 
@@ -335,8 +333,9 @@ public class GUI extends Application {
         primaryStage.show();
     }
     @Override
-    public void stop() throws Exception {
-        connect(EventBase.CLIENT_SHUTDOWN, null);
+    public void stop() throws Exception {  //исправила!
+        List<String> addList = EventBase.codingMessages(EventBase.CLIENT_SHUTDOWN, null,null);
+        connect(EventBase.CLIENT_SHUTDOWN, addList);
         InputThread.yield();
         ois.close();
         oos.close();

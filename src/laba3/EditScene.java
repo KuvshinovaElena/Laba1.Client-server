@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import laba1.Book;
 import laba1.DataServer;
 import laba1.EventBase;
+import laba1.InputThread;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,7 +25,7 @@ import java.util.List;
  * Created by Елена on 21.05.2015.
  */
 public class EditScene extends MyScene {
-    public EditScene(Group root, final ObservableList<Book> data, final Book book, final ObjectOutputStream oos, final ObjectInputStream ois){
+    public EditScene(Group root, final ObservableList<Book> data, final Book book, final ObjectOutputStream oos, final InputThread input){
         setScene(new Scene(root));
         final String article = book.getArticle();
         Label labell = new Label("Article");
@@ -56,7 +57,7 @@ public class EditScene extends MyScene {
                 String newarticle = checkEnter(text1);
                 if (newarticle!=null) {
                     try {
-                        newarticle = checkArticle(article,text1,oos,ois);
+                        newarticle = checkArticle(article,text1,oos, input);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }

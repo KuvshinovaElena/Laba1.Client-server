@@ -4,6 +4,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import laba1.Book;
 import laba1.EventBase;
+import laba1.InputThread;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -38,7 +39,34 @@ public class MyScene extends Stage {
         }
         return num;
     }
-    public static String checkArticle (String article,TextField newarticle, ObjectOutputStream oos, ObjectInputStream ois) throws RemoteException {
+
+    public static String checkArticle (String article,TextField newarticle, final ObjectOutputStream oos, final InputThread input) throws RemoteException {
+       List<String> message = EventBase.codingMessages(EventBase.FIND, article);
+        try {
+            oos.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String reply = null;
+        try {
+
+            reply = (String) input.getInputStream().readObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (reply == "0")
+            return newarticle.getText();
+        else {
+            newarticle.clear();
+            newarticle.setStyle("-fx-opacity: 0.5; -fx-background-color: red");
+            newarticle.setPromptText("This article is already in the database.");
+            return null;
+        }
+    }
+
+/*    public static String checkArticle (String article,TextField newarticle, ObjectOutputStream oos, ObjectInputStream ois) throws RemoteException {
         String str1,str2;
         if (article!=null) {
             str1 = article;
@@ -61,7 +89,7 @@ public class MyScene extends Stage {
             newarticle.setPromptText("This article is already in the database.");
             return null;
         }
-    }
+    }*/
 
     public static String checkEnter (TextField text){
         String str;

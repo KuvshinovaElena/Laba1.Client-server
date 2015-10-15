@@ -11,10 +11,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import laba1.Book;
 import laba1.EventBase;
+import laba1.InputThread;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +25,7 @@ import java.util.List;
  */
 public class AddScene  extends MyScene{
 
-    public AddScene(final ObservableList<Book> data, final ObjectOutputStream oos, final ObjectInputStream ois){
+    public AddScene(final ObservableList<Book> data, final ObjectOutputStream oos, final InputThread input){
         final Group root = new Group();
         setScene(new Scene(root));
 
@@ -55,13 +57,13 @@ public class AddScene  extends MyScene{
             @Override
             public void handle(ActionEvent actionEvent) {
                 String article = checkEnter(text1);
-               /* if (article!=null) {
+                if (article!=null) {
                     try {
-                        article = checkArticle(null,text1,oos,ois);
+                        article = checkArticle(null,text1,oos,input);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
-                }*/
+                }
                 String autor = checkEnter(text2);
                 String title  = checkEnter(text3);
                 int quantity = checkInputInt(text4);

@@ -14,18 +14,22 @@ import java.util.List;
   public class InputThread extends Thread {
     Socket socket;
     GUI gui;
+    ObjectInputStream ois;
 
     public InputThread(Socket socket, GUI gui) {
-        this.socket = socket;
+            this.socket = socket;
             this.gui = gui;
             start();
-        }
+    }
 
+    public ObjectInputStream getInputStream(){
+        return ois;
+    }
     @Override
     public void run() {
         try {
             while (true) {
-                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                ois = new ObjectInputStream(socket.getInputStream());
                 String message = (String) ois.readObject();
                 System.out.println("Message from server: " + message);
                 if (message.equals("Update")){

@@ -221,7 +221,6 @@ public class ServerImplement extends Thread {
             } catch (TransformerException e) {
                 e.printStackTrace();
             }
-           // updateTables();
             return true;
         } else
             return false;
@@ -246,7 +245,7 @@ public class ServerImplement extends Thread {
         return this.books;
     }
     public String IncomingEvent(List<String> messages, ObjectOutputStream oos, ObjectInputStream ois) throws IOException, XMLStreamException {
-        if (messages != null) {
+        if (messages != null){
            ArrayList<Book> books = EventBase.decodingMessages(messages);
             switch (Integer.parseInt(messages.get(0))) {
 
@@ -292,9 +291,20 @@ public class ServerImplement extends Thread {
                     return "Edited successfully ";
                 }
 
-                case EventBase.GET_LIST:
+                case EventBase.FIND:
                 {
-                    //findByArticle(messages.get(1).get(0),messages.get(2).get(0));
+                    List<String> find = null;
+                    try {
+                        find = (List<String>) ois.readObject();
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    if((findByArticle(find.get(1),find.get(2)).isEmpty())){
+                        oos.writeObject("0");
+                    }
+                    else
+                        oos.writeObject("1");
                     return "Got successfully ";
                 }
 
