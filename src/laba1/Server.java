@@ -18,8 +18,6 @@ import java.rmi.registry.Registry;
  * Created by Елена on 14.03.2015.
  */
 
-//Смотри примеры 1 и 2 в lab_5 и лекциях
-
 public class Server {
 
     public static void main (String [] args) throws IOException, ClassNotFoundException
